@@ -25,7 +25,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const resolvedParams = await params;
     const body = await request.json();
 
-    const updatedProduct = await Product.findByIdAndUpdate(resolvedParams.id, body, { new: true });
+    const updatedProduct = await (Product as any).findByIdAndUpdate(resolvedParams.id, body, { new: true });
     
     if (!updatedProduct) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
@@ -45,7 +45,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     await connectToDatabase();
     const resolvedParams = await params;
 
-    const deletedProduct = await Product.findByIdAndDelete(resolvedParams.id);
+    const deletedProduct = await (Product as any).findByIdAndDelete(resolvedParams.id);
 
     if (!deletedProduct) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
