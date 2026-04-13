@@ -3,7 +3,7 @@ import connectToDatabase from '../../../../lib/mongodb';
 import Product from '../../../../lib/models/Product';
 import mongoose from 'mongoose';
 
-export async function GET(request: Request, context: { params: { id: string } }) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     await connectToDatabase();
     
@@ -26,7 +26,7 @@ export async function GET(request: Request, context: { params: { id: string } })
   }
 }
 
-export async function PUT(request: Request, context: { params: { id: string } }) {
+export async function PUT(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     await connectToDatabase();
     const params = await context.params;
@@ -63,7 +63,7 @@ export async function PUT(request: Request, context: { params: { id: string } })
   }
 }
 
-export async function DELETE(request: Request, context: { params: { id: string } }) {
+export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     await connectToDatabase();
     const params = await context.params;
