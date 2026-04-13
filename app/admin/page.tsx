@@ -13,8 +13,8 @@ export default async function AdminDashboard() {
 
   try {
     await connectToDatabase();
-    products = await Product.find({}).sort({ createdAt: -1 }).limit(5);
-    totalProducts = await Product.countDocuments();
+    products = await (Product as any).find({}).sort({ createdAt: -1 }).limit(5);
+    totalProducts = await (Product as any).countDocuments();
   } catch (e) {
     // DB not available
   }
