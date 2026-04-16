@@ -4,11 +4,13 @@ import { Search, MapPin, Heart, ShoppingBag, User, Menu, X, ChevronRight, UserCi
 import Link from "next/link";
 import { useStore } from "../lib/context/StoreContext";
 import { useEffect, useState } from "react";
+import AuthModal from "./AuthModal";
 
 export default function Header() {
   const { cartCount, wishlist, user, logout } = useStore();
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -127,37 +129,56 @@ export default function Header() {
 
         {/* Amazon-Style Secondary Navigation */}
         <div className="bg-[#1f1f1f] border-t border-[#333]">
-          <nav className="max-w-[1920px] mx-auto px-2 md:px-6 flex items-center h-10 overflow-x-auto hide-scrollbar">
-            {/* Hamburger "All" */}
-            <button 
-              onClick={() => setMenuOpen(true)} 
-              className="flex items-center gap-1 hover:outline outline-1 outline-white px-2 py-1 text-sm font-bold tracking-wider mr-2 flex-shrink-0"
-            >
-              <Menu size={20} /> All
-            </button>
-            
-            {/* Nav Links */}
-            <ul className="flex items-center gap-2 text-[13px] font-semibold tracking-wider text-[#eee] whitespace-nowrap">
-              <li>
-                <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1 inline-block">Home</Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:outline outline-1 outline-white px-2 py-1 inline-block">About</Link>
-              </li>
-              {["New Arrivals", "Bestsellers", "Niche Fragrances", "Designer", "Gift Sets", "Sale"].map((cat) => (
-                <li key={cat}>
-                  <Link 
-                    href={`/collection?category=${cat}`} 
-                    className={`hover:outline outline-1 outline-white px-2 py-1 inline-block ${cat === 'Sale' ? 'text-red-400' : ''}`}
-                  >
-                    {cat}
-                  </Link>
+          <nav className="max-w-[1920px] mx-auto px-2 md:px-4 flex items-center justify-between h-10 overflow-x-auto hide-scrollbar">
+            <div className="flex items-center">
+              {/* Hamburger "All" */}
+              <button 
+                onClick={() => setMenuOpen(true)} 
+                className="flex items-center gap-1 hover:outline outline-1 outline-white px-2 py-1 text-sm font-bold tracking-wider mr-2 flex-shrink-0"
+              >
+                <Menu size={20} /> All
+              </button>
+              
+              {/* Nav Links */}
+              <ul className="flex items-center gap-2 text-[13px] font-semibold tracking-wider text-[#eee] whitespace-nowrap">
+                <li>
+                  <Link href="/" className="hover:outline outline-1 outline-white px-2 py-1 inline-block">Home</Link>
                 </li>
-              ))}
-            </ul>
+                <li>
+                  <Link href="/about" className="hover:outline outline-1 outline-white px-2 py-1 inline-block">About</Link>
+                </li>
+                {["New Arrivals", "Bestsellers", "Niche Fragrances", "Designer", "Gift Sets", "Sale"].map((cat) => (
+                  <li key={cat}>
+                    <Link 
+                      href={`/collection?category=${cat}`} 
+                      className={`hover:outline outline-1 outline-white px-2 py-1 inline-block ${cat === 'Sale' ? 'text-red-400' : ''}`}
+                    >
+                      {cat}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Premium Login / Sign up Button in the right corner */}
+            {!user && mounted && (
+              <button 
+                onClick={() => setAuthModalOpen(true)}
+                className="hidden md:flex items-center gap-2 bg-[#d4af37] text-black px-4 py-1 text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors h-full"
+              >
+                <User size={14} /> Login / Sign Up
+              </button>
+            )}
+            {user && mounted && (
+              <div className="hidden md:flex items-center gap-2 bg-[#d4af37] text-black px-4 py-1 text-xs font-bold uppercase tracking-widest h-full">
+                Welcome, {user.name.split(" ")[0]}
+              </div>
+            )}
           </nav>
         </div>
       </header>
+
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
 
       {/* Slide-out Drawer & Overlay */}
       {menuOpen && (

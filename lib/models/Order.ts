@@ -54,4 +54,5 @@ const OrderSchema: Schema = new Schema({
   deliveredAt: { type: Date }
 }, { timestamps: true });
 
-export default mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema);
+const Order = (mongoose.models.Order as mongoose.Model<IOrder>) || mongoose.model<IOrder>('Order', OrderSchema);
+export default Order;

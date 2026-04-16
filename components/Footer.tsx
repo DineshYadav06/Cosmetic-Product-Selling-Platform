@@ -11,22 +11,22 @@ export default function Footer() {
           <div className="flex flex-col">
             <h3 className="uppercase font-bold tracking-[0.2em] mb-6 text-sm">Need Help?</h3>
             <ul className="space-y-4 text-xs tracking-wider text-gray-400 font-light uppercase">
-              <li><Link href="#" className="hover:text-white transition-colors">Contact Us</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Delivery Information</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Returns & Refunds</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">FAQs</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Store Locator</Link></li>
+              <li><Link href="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
+              <li><Link href="/info/delivery" className="hover:text-white transition-colors">Delivery Information</Link></li>
+              <li><Link href="/info/returns" className="hover:text-white transition-colors">Returns & Refunds</Link></li>
+              <li><Link href="/info/faqs" className="hover:text-white transition-colors">FAQs</Link></li>
+              <li><Link href="/stores" className="hover:text-white transition-colors">Store Locator</Link></li>
             </ul>
           </div>
 
           <div className="flex flex-col">
             <h3 className="uppercase font-bold tracking-[0.2em] mb-6 text-sm">About GLOWMART INDIA</h3>
             <ul className="space-y-4 text-xs tracking-wider text-gray-400 font-light uppercase">
-              <li><Link href="#" className="hover:text-white transition-colors">Our Story</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Careers</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Terms of Service</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Corporate Responsibility</Link></li>
+              <li><Link href="/about" className="hover:text-white transition-colors">Our Story</Link></li>
+              <li><Link href="/info/careers" className="hover:text-white transition-colors">Careers</Link></li>
+              <li><Link href="/info/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/info/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+              <li><Link href="/info/responsibility" className="hover:text-white transition-colors">Corporate Responsibility</Link></li>
               <li className="pt-2"><Link href="/admin" className="text-[#d4af37] font-bold hover:text-white transition-colors flex items-center gap-2">Owner Section 🔐</Link></li>
             </ul>
           </div>
@@ -47,12 +47,9 @@ export default function Footer() {
               <a href="https://www.instagram.com/dineshkumaryadav_dk/" className="hover:text-white transition-colors">Instagram</a>
               <a href="https://www.instagram.com/dineshkumaryadav_dk/" className="hover:text-white transition-colors">Facebook</a>
               <a href="#" className="hover:text-white transition-colors">X</a>
-              <a href="www.youtube.com/@dineshkumaryadav306" className="hover:text-white transition-colors">YouTube</a>
+              <a href="https://www.youtube.com/@dineshkumaryadav306" className="hover:text-white transition-colors">YouTube</a>
             </div>
-            <a href="https://github.com/DineshYadav06" className="hover:text-white transition-colors">
-              GitHub
-            </a>
-            <p className="text-xs text-gray-400 mt-2">
+            <p className="text-xs text-gray-400 mb-2">
               Created by Dinesh Yadav
             </p>
 
