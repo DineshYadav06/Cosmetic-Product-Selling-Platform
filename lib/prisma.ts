@@ -1,15 +1,5 @@
-import { PrismaClient } from '@prisma/client'
+// NOTE: This project uses MongoDB/Mongoose for database.
+// Prisma is not active. This file is a placeholder to avoid import errors.
 
-const prismaClientSingleton = () => {
-  return new PrismaClient()
-}
-
-declare global {
-  var prisma: undefined | ReturnType<typeof prismaClientSingleton>
-}
-
-const prisma = globalThis.prisma ?? prismaClientSingleton()
-
-export default prisma
-
-if (process.env.NODE_ENV !== 'production') globalThis.prisma = prisma
+const prisma = null;
+export default prisma;
