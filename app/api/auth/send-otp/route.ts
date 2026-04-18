@@ -38,7 +38,7 @@ export async function POST(request: Request) {
 
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
     let user = await User.findOne({ email: trimmed });
 
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
           <div style="font-size:40px; font-weight:bold; background:#1a1a2e; margin:24px auto; display:inline-block; padding:18px 40px; letter-spacing:10px; color:#2874f0; border-radius:10px; border:2px solid #2874f0;">
             ${otp}
           </div>
-          <p style="font-size:13px; color:#888; margin-top:16px;">Expires in <strong style="color:#fff">10 minutes</strong>. Do not share it.</p>
+          <p style="font-size:13px; color:#888; margin-top:16px;">Expires in <strong style="color:#fff">5 minutes</strong>. Do not share it.</p>
           <p style="font-size:11px; color:#444; margin-top:32px;">If you didn't request this, you can safely ignore this email.</p>
         </div>
       `,
