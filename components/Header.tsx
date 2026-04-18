@@ -4,13 +4,11 @@ import { Search, MapPin, Heart, ShoppingBag, User, Menu, X, ChevronRight, UserCi
 import Link from "next/link";
 import { useStore } from "../lib/context/StoreContext";
 import { useEffect, useState } from "react";
-import AuthModal from "./AuthModal";
 
 export default function Header() {
   const { cartCount, wishlist, user, logout } = useStore();
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
@@ -126,13 +124,13 @@ export default function Header() {
 
             {/* Login button on mobile (icon only) */}
             {!user && mounted && (
-              <button
-                onClick={() => setAuthModalOpen(true)}
+              <Link
+                href="/auth"
                 className="md:hidden text-white hover:text-[#d4af37] transition-colors"
                 aria-label="Login"
               >
                 <User size={21} />
-              </button>
+              </Link>
             )}
 
             <Link href="/wishlist" className="hover:text-[#d4af37] transition-colors relative flex items-center">
@@ -154,12 +152,12 @@ export default function Header() {
 
             {/* Login button desktop */}
             {!user && mounted && (
-              <button
-                onClick={() => setAuthModalOpen(true)}
+              <Link
+                href="/auth"
                 className="hidden md:flex items-center gap-2 bg-[#d4af37] text-black px-4 py-1.5 text-xs font-bold uppercase tracking-widest hover:bg-white transition-colors"
               >
                 <User size={14} /> Login / Sign Up
-              </button>
+              </Link>
             )}
             {user && mounted && (
               <div className="hidden md:flex items-center gap-2 bg-[#d4af37] text-black px-4 py-1.5 text-xs font-bold uppercase tracking-widest">
@@ -208,8 +206,6 @@ export default function Header() {
           </nav>
         </div>
       </header>
-
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
 
       {/* Slide-out Drawer */}
       {menuOpen && (
@@ -265,12 +261,13 @@ export default function Header() {
                   Boutiques / Stores <ChevronRight size={15} className="text-gray-400" />
                 </Link>
                 {!user && (
-                  <button
-                    onClick={() => { setMenuOpen(false); setAuthModalOpen(true); }}
+                  <Link
+                    href="/auth"
+                    onClick={() => { setMenuOpen(false); }}
                     className="flex items-center justify-between w-full px-6 py-3 text-sm text-[#d4af37] font-bold hover:bg-gray-100"
                   >
                     Login / Sign Up <ChevronRight size={15} />
-                  </button>
+                  </Link>
                 )}
                 {user && (
                   <button
