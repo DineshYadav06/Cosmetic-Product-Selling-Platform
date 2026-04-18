@@ -7,10 +7,10 @@ import { sendEmail } from '../../../../lib/utils/sendEmail';
 export async function POST(request: Request) {
   try {
     await connectToDatabase();
-    const { name, email, password } = await request.json();
+    const { name, email, password, dob, phoneNumber, building, landmark, location } = await request.json();
 
     if (!name || !email || !password) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+      return NextResponse.json({ error: 'Missing core fields' }, { status: 400 });
     }
 
     const existingUser = await User.findOne({ email });
@@ -22,12 +22,17 @@ export async function POST(request: Request) {
     const passwordHash = await bcrypt.hash(password, salt);
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+    const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
 
     const newUser = new User({
       name,
       email,
       passwordHash,
+      dob,
+      phoneNumber,
+      building,
+      landmark,
+      location,
       role: 'user',
       isVerified: false,
       otp,
@@ -37,7 +42,7 @@ export async function POST(request: Request) {
     await newUser.save();
 
     // Send OTP Email
-    await sendEmail({
+    const emailSent = await sendEmail({
       to: email,
       subject: 'GLOWMART - Verify Your Account',
       html: `
@@ -48,10 +53,23 @@ export async function POST(request: Request) {
           <div style="font-size: 32px; font-weight: bold; background: #222; margin: 20px auto; display: inline-block; padding: 15px 30px; letter-spacing: 5px; color: #d4af37;">
             ${otp}
           </div>
-          <p style="font-size: 12px; color: #888;">This code will expire in 10 minutes. Do not share it.</p>
+          <p style="font-size: 12px; color: #888;">This code will expire in 5 minutes. Do not share it.</p>
         </div>
       `
     });
+
+    console.log(`\n=========================================\n`);
+    console.log(`🔐 NEW REGISTRATION OTP FOR ${email}: ${otp}`);
+    console.log(`=========================================\n`);
+
+    if (!emailSent) {
+      console.warn("Email failed to send. Returning OTP in dev mode for testing.");
+      return NextResponse.json({ 
+        message: 'Registration successful but email failed to send.', 
+        error: "Email delivery failed", 
+        ...(process.env.NODE_ENV === 'development' && { devOtp: otp })
+      }, { status: 201 });
+    }
 
     return NextResponse.json({ message: 'User registered successfully. Please verify OTP.' }, { status: 201 });
   } catch (error) {

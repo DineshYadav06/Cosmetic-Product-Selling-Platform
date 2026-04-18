@@ -142,6 +142,11 @@ function AuthForm() {
     password: "",
     confirmPassword: "",
     otp: "",
+    dob: "",
+    phoneNumber: "",
+    building: "",
+    landmark: "",
+    location: "",
   });
 
   const router = useRouter();
@@ -286,7 +291,16 @@ function AuthForm() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: form.name, email: form.identifier, password: form.password }),
+        body: JSON.stringify({ 
+          name: form.name, 
+          email: form.identifier, 
+          password: form.password,
+          dob: form.dob,
+          phoneNumber: form.phoneNumber,
+          building: form.building,
+          landmark: form.landmark,
+          location: form.location
+        }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -301,6 +315,51 @@ function AuthForm() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const detectLocation = () => {
+    setError("");
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser");
+      return;
+    }
+    setLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+          const data = await res.json();
+          if (!data || !data.address) throw new Error("No address returned");
+
+          const addr = data.address;
+          const road = addr.road || addr.street || addr.pedestrian || addr.path || "";
+          const area = addr.suburb || addr.neighbourhood || addr.residential || addr.city_district || "";
+          const city = addr.city || addr.town || addr.village || addr.county || "Unknown City";
+          const state = addr.state || "";
+          const postcode = addr.postcode || "";
+          const buildingName = addr.building || addr.house_number || addr.amenity || "";
+
+          const landmarkText = [road, area].filter(Boolean).join(", ");
+          const locationText = [city, state, postcode].filter(Boolean).join(", ");
+
+          setForm((prev) => ({
+            ...prev,
+            building: buildingName || prev.building,
+            landmark: landmarkText || prev.landmark,
+            location: locationText,
+          }));
+        } catch {
+          setError("Failed to auto-detect location.");
+        } finally {
+          setLoading(false);
+        }
+      },
+      () => {
+        setError("Unable to retrieve location");
+        setLoading(false);
+      }
+    );
   };
 
   const goBack = () => {
@@ -501,6 +560,78 @@ function AuthForm() {
         />
         <label htmlFor="reg-name" className="gm-label">Full Name</label>
         <span className="gm-underline" />
+      </div>
+
+      <div className="gm-field">
+        <input
+          id="reg-dob"
+          type="date"
+          className="gm-input"
+          placeholder=" "
+          value={form.dob}
+          onChange={set("dob")}
+        />
+        <label htmlFor="reg-dob" className="gm-label">Date of Birth</label>
+        <span className="gm-underline" />
+      </div>
+
+      <div className="gm-field">
+        <input
+          id="reg-phone"
+          type="tel"
+          className="gm-input"
+          placeholder=" "
+          value={form.phoneNumber}
+          onChange={set("phoneNumber")}
+        />
+        <label htmlFor="reg-phone" className="gm-label">Phone Number</label>
+        <span className="gm-underline" />
+      </div>
+
+      <div className="gm-field">
+        <input
+          id="reg-building"
+          type="text"
+          className="gm-input"
+          placeholder=" "
+          value={form.building}
+          onChange={set("building")}
+        />
+        <label htmlFor="reg-building" className="gm-label">House No. / Building Name</label>
+        <span className="gm-underline" />
+      </div>
+
+      <div className="gm-field">
+        <input
+          id="reg-landmark"
+          type="text"
+          className="gm-input"
+          placeholder=" "
+          value={form.landmark}
+          onChange={set("landmark")}
+        />
+        <label htmlFor="reg-landmark" className="gm-label">Road Name, Area, Colony / Landmark</label>
+        <span className="gm-underline" />
+      </div>
+
+      <div className="gm-field" style={{ position: "relative" }}>
+        <input
+          id="reg-location"
+          type="text"
+          className="gm-input"
+          placeholder=" "
+          value={form.location}
+          onChange={set("location")}
+        />
+        <label htmlFor="reg-location" className="gm-label">Location</label>
+        <span className="gm-underline" />
+        <button 
+          type="button" 
+          onClick={detectLocation}
+          style={{ position: "absolute", right: 0, top: "20px", background: "none", border: "none", color: "#2874f0", cursor: "pointer", fontSize: "12px", fontWeight: "bold" }}
+        >
+          {loading ? "..." : "Auto Detect"}
+        </button>
       </div>
 
       <div className="gm-field">

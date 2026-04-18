@@ -7,6 +7,11 @@ export interface IUser extends Document {
   isVerified: boolean;
   otp?: string;
   otpExpires?: Date;
+  dob?: string;
+  phoneNumber?: string;
+  building?: string;
+  landmark?: string;
+  location?: string;
   role: 'user' | 'admin';
   cart: {
     product: mongoose.Types.ObjectId;
@@ -21,6 +26,11 @@ const UserSchema: Schema = new Schema({
   isVerified: { type: Boolean, default: false },
   otp: { type: String },
   otpExpires: { type: Date },
+  dob: { type: String },
+  phoneNumber: { type: String },
+  building: { type: String },
+  landmark: { type: String },
+  location: { type: String },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
   cart: [{
     product: { type: Schema.Types.ObjectId, ref: 'Product' },
