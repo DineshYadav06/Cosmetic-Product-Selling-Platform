@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '../../../../lib/mongodb';
 import User from '../../../../lib/models/User';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_for_dev_only';
 
 export async function POST(request: Request) {
   try {
@@ -16,28 +19,35 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    if (user.isVerified) {
-      return NextResponse.json({ error: 'Account already verified' }, { status: 400 });
-    }
-
     if (user.otp !== otp) {
-      return NextResponse.json({ error: 'Invalid OTP' }, { status: 401 });
+      return NextResponse.json({ error: 'Invalid OTP. Please try again.' }, { status: 401 });
     }
 
     if (!user.otpExpires || user.otpExpires < new Date()) {
-       return NextResponse.json({ error: 'OTP has expired. Please register again to get a new one' }, { status: 401 });
+      return NextResponse.json({ error: 'OTP has expired. Please request a new one.' }, { status: 401 });
     }
 
-    // Verify User and clear OTP data
+    // Mark user as verified & clear OTP
     user.isVerified = true;
     user.otp = undefined;
     user.otpExpires = undefined;
     await user.save();
 
-    return NextResponse.json({ message: 'Email completely verified successfully!' }, { status: 200 });
+    // Issue JWT so user is logged in immediately
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    return NextResponse.json({
+      message: 'OTP verified successfully!',
+      token,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+    }, { status: 200 });
 
   } catch (error) {
-    console.error(error);
+    console.error('[verify error]', error);
     return NextResponse.json({ error: 'Verification error' }, { status: 500 });
   }
 }

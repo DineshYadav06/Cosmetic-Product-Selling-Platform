@@ -36,9 +36,12 @@ export default function Footer() {
             <p className="text-gray-400 font-light text-sm mb-4 leading-relaxed">
               Join our exclusive rewards program and earn points on every purchase. Unlock premium tiers for VIP gifts and early access to sales.
             </p>
-            <button className="bg-white text-black font-bold uppercase tracking-widest text-xs py-3 px-6 hover:bg-gray-300 transition-colors self-start">
+            <Link
+              href="/beauty-pass"
+              className="bg-white text-black font-bold uppercase tracking-widest text-xs py-3 px-6 hover:bg-[#d4af37] transition-colors self-start text-center"
+            >
               Join For Free
-            </button>
+            </Link>
           </div>
 
           <div className="flex flex-col">
@@ -49,9 +52,7 @@ export default function Footer() {
               <a href="#" className="hover:text-white transition-colors">X</a>
               <a href="https://www.youtube.com/@dineshkumaryadav306" className="hover:text-white transition-colors">YouTube</a>
             </div>
-            <p className="text-xs text-gray-400 mb-2">
-              Created by Dinesh Yadav
-            </p>
+    
 
             <h3 className="uppercase font-bold tracking-[0.2em] mb-4 text-[10px] text-gray-500">Subscribe for updates</h3>
             <div className="flex w-full">
@@ -60,6 +61,10 @@ export default function Footer() {
                 <Mail size={16} />
               </button>
             </div>
+      
+            <h3 className="text-xs text-gray-400 mb-2">
+              Created by Dinesh Yadav
+            </h3>
           </div>
 
         </div>
