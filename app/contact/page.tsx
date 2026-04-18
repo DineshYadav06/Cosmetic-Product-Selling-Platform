@@ -231,7 +231,7 @@ export default function ContactPage() {
                 <div className="absolute inset-0 bg-gradient-to-br from-[#d4af37]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <Phone size={32} className="mx-auto mb-4 text-[#d4af37] group-hover:scale-110 transition-transform" strokeWidth={1.5} />
                 <h4 className="font-serif font-bold uppercase tracking-widest text-sm mb-2">Call</h4>
-                <p className="text-[#888] text-xs">+91 9555240369<br/>Mon-Sat: 10AM - 6PM</p>
+                <p className="text-[#888] text-xs">+91 955524XXX<br/>Mon-Sat: 10AM - 6PM</p>
               </motion.div>
 
               <motion.div variants={cardVariants} className="bg-[#111] border border-[#222] p-8 text-center group hover:-translate-y-2 hover:border-[#d4af37]/30 transition-all duration-300 relative overflow-hidden h-full flex flex-col justify-center">

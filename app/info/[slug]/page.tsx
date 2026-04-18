@@ -442,6 +442,7 @@ export default function InfoPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <PageNav label={data.title} />
       {/* ── Hero Banner ── */}
       <div className="relative py-24 px-6 text-center overflow-hidden border-b border-[#1a1a1a]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(212,175,55,0.07)_0%,transparent_70%)]" />

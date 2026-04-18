@@ -39,7 +39,7 @@ async function connectToDatabase() {
     console.log('MongoDB connected successfully');
   } catch (e) {
     cached.promise = null;
-    console.warn('Failed to connect to MongoDB, proceeding without DB connection');
+    console.error('Failed to connect to MongoDB:', e);
     return null;
   }
 
