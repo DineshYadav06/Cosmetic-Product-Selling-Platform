@@ -4,10 +4,10 @@ import Image from "next/image";
 export default function Hero() {
   return (
     <section className="relative w-full h-[70vh] min-h-[500px] overflow-hidden bg-black flex items-center justify-center">
-      {/* Background Dark Luxury Fragrance Image */}
+      {/* Background Dark Luxury Cosmetic Image */}
       <Image
-        src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=2000"
-        alt="GLOWMART Luxury Men's Fragrances"
+        src="https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&q=80&w=2000"
+        alt="GLOWMART Luxury Cosmetic Selection"
         fill
         className="object-cover object-center brightness-[0.4]"
         priority

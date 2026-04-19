@@ -57,7 +57,7 @@ export default function Header() {
                   <button onClick={logout} className="hover:text-red-400 transition-colors uppercase">Logout</button>
                 </div>
               ) : (
-                <Link href="/auth" className="flex items-center gap-1 hover:text-[#d4af37] transition-colors">
+                <Link href="/account" className="flex items-center gap-1 hover:text-[#d4af37] transition-colors">
                   <User size={14} /> Account
                 </Link>
               )}
