@@ -57,9 +57,10 @@ export default async function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="relative aspect-[4/3] group overflow-hidden cursor-pointer shadow-lg bg-gray-100">
               <Image
-                src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=1000"
-                alt="Latest Designer Fragrances"
+                src="https://images.unsplash.com/photo-1596462502278-27bf85033e5a?auto=format&fit=crop&q=80&w=1000"
+                alt="Daily Glow Skincare"
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover group-hover:scale-105 transition-transform duration-700 brightness-[0.6]"
               />
              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
@@ -72,9 +73,10 @@ export default async function Home() {
           
           <div className="relative aspect-[4/3] group overflow-hidden cursor-pointer shadow-lg bg-gray-100">
               <Image
-                src="https://images.unsplash.com/photo-1523293111662-bf24f2225900?auto=format&fit=crop&q=80&w=1000"
-                alt="Virtual Fragrance Consultation"
+                src="https://images.unsplash.com/photo-1512496015851-a1c869237a17?auto=format&fit=crop&q=80&w=1000"
+                alt="Party Ready Makeup"
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover group-hover:scale-105 transition-transform duration-700 brightness-[0.7]"
               />
              <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />

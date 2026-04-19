@@ -46,6 +46,7 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
         price: Number(body.price),
         originalPrice: body.originalPrice ? Number(body.originalPrice) : undefined,
         image: body.image,
+        description: body.description,
         category: body.category || 'General',
         inStock: body.inStock !== undefined ? body.inStock : true
       },

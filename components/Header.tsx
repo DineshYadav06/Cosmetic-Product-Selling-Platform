@@ -10,9 +10,13 @@ export default function Header() {
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [announcement, setAnnouncement] = useState("FREE SHIPPING ON ALL ORDERS OVER ₹999");
 
   useEffect(() => {
     setMounted(true);
+    fetch('/api/admin/settings').then(res => res.json()).then(data => {
+      if(data && data.announcementText) setAnnouncement(data.announcementText);
+    }).catch(() => {});
   }, []);
 
   const drawerSections = [
@@ -37,6 +41,11 @@ export default function Header() {
   return (
     <>
       <header className="w-full border-b border-[#222] bg-black text-white sticky top-0 z-50">
+        {/* Dynamic Top Banner */}
+        <div className="bg-[#d4af37] text-black text-[10px] font-bold uppercase tracking-[0.2em] py-1.5 px-4 text-center">
+          {announcement}
+        </div>
+        
         {/* Top Utility Bar — hidden on mobile */}
         <div className="hidden sm:block bg-[#111] text-[#a0a0a0] text-xs py-2 px-4 md:px-8 border-b border-[#222]">
           <div className="max-w-full mx-auto flex justify-end gap-6 items-center uppercase tracking-wider font-semibold">

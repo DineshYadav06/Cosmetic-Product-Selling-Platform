@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, LayoutDashboard, Package, ClipboardList, ShoppingBag, Settings, Image as ImageIcon, CheckCircle2 } from "lucide-react";
 
-const CATEGORIES = ["Makeup", "Skincare", "Fragrance", "Haircare", "Gift Sets"];
+const CATEGORIES = ["Bestsellers", "Just Dropped", "Makeup", "Skincare", "Fragrance", "Haircare", "Gift Sets"];
 
 function AddProductForm() {
   const router = useRouter();
@@ -17,7 +17,7 @@ function AddProductForm() {
   const [success, setSuccess] = useState(false);
   const [fetching, setFetching] = useState(isEditing);
   const [form, setForm] = useState({
-    brand: "", name: "", price: "", originalPrice: "", image: "", category: "Makeup", stock: true
+    brand: "", name: "", price: "", originalPrice: "", image: "", description: "", category: "Bestsellers", stock: true
   });
 
   // Fetch product if editing
@@ -34,6 +34,7 @@ function AddProductForm() {
               price: data.price.toString(),
               originalPrice: data.originalPrice ? data.originalPrice.toString() : "",
               image: data.image,
+              description: data.description || "",
               category: data.category || "General",
               stock: data.inStock !== false // default true
             });
@@ -62,6 +63,7 @@ function AddProductForm() {
         price: Number(form.price),
         originalPrice: form.originalPrice ? Number(form.originalPrice) : undefined,
         image: form.image,
+        description: form.description,
         category: form.category,
         inStock: form.stock
       };
@@ -156,6 +158,15 @@ function AddProductForm() {
                        {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                      </select>
                    </div>
+                   
+                   <div>
+                     <label className="block text-[10px] uppercase tracking-[0.2em] text-[#888] font-bold mb-2">Description</label>
+                     <textarea placeholder="Product description" 
+                        value={form.description}
+                        rows={4}
+                        className="w-full bg-[#111] border border-[#333] p-3 text-white focus:border-[#d4af37] outline-none text-sm"
+                        onChange={e => setForm({...form, description: e.target.value})}></textarea>
+                   </div>
                  </div>
               </div>
 
@@ -192,11 +203,19 @@ function AddProductForm() {
               <div className="bg-[#0a0a0a] border border-[#1a1a1a] p-6">
                  <h3 className="font-serif font-bold tracking-widest uppercase text-sm mb-6 pb-4 border-b border-[#1a1a1a]">Media</h3>
                  
-                 <label className="block text-[10px] uppercase tracking-[0.2em] text-[#888] font-bold mb-2">Image URL*</label>
-                 <input required placeholder="https://..." 
-                    value={form.image}
+                 <label className="block text-[10px] uppercase tracking-[0.2em] text-[#888] font-bold mb-2">Upload Image*</label>
+                 <input type="file" accept="image/*" 
                     className="w-full bg-[#111] border border-[#333] p-3 text-white focus:border-[#d4af37] outline-none text-xs mb-4"
-                    onChange={e => setForm({...form, image: e.target.value})}/>
+                    onChange={e => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          setForm({...form, image: reader.result as string});
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    }}/>
 
                  <div className="w-full aspect-square bg-[#111] border border-[#333] flex items-center justify-center overflow-hidden">
                    {form.image ? (
