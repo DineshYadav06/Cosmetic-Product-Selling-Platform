@@ -6,7 +6,7 @@ import { MessageCircle, X, Send, Bot, User, Camera, Image as ImageIcon } from "l
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{ role: "user" | "bot"; text: string; image?: string }[]>([
-    { role: "bot", text: "Hello! I am your Glowmart AI Assistant. I can understand Hindi & English. You can even upload your photo for a skin analysis! How can I help you?" }
+    { role: "bot", text: "Hello! I am your Glowmart AI Assistant. You can even upload your photo for a skin analysis! How can I help you? & Solve the any doubts " }
   ]);
   const [input, setInput] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -17,6 +17,35 @@ export default function Chatbot() {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  // Load history from local storage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("glowmart_chat_history");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Check if 1 week has passed since last update
+        if (Date.now() - parsed.timestamp < 7 * 24 * 60 * 60 * 1000) {
+          setMessages(parsed.messages);
+        } else {
+          localStorage.removeItem("glowmart_chat_history");
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load chat history", e);
+    }
+  }, []);
+
+  // Save to local storage whenever messages change
+  useEffect(() => {
+    // Only save if we have more than the default greeting
+    if (messages.length > 1) {
+      localStorage.setItem("glowmart_chat_history", JSON.stringify({
+        messages,
+        timestamp: Date.now()
+      }));
+    }
+  }, [messages]);
 
   useEffect(() => {
     scrollToBottom();
@@ -48,7 +77,8 @@ export default function Chatbot() {
     const userMessage = input.trim();
     const currentImg = selectedImage;
     
-    setMessages(prev => [...prev, { role: "user", text: userMessage, image: currentImg || undefined }]);
+    const newMessages = [...messages, { role: "user" as const, text: userMessage, image: currentImg || undefined }];
+    setMessages(newMessages);
     setInput("");
     clearImage();
     setIsLoading(true);
@@ -57,8 +87,8 @@ export default function Chatbot() {
       const response = await fetch("/api/bot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Increased max body size is needed to send base64 images
-        body: JSON.stringify({ message: userMessage, image: currentImg })
+        // Expanded to pass entire history for ChatGPT-like memory
+        body: JSON.stringify({ history: newMessages })
       });
       
       const data = await response.json();
@@ -121,7 +151,7 @@ export default function Chatbot() {
                  <Bot size={16} className="text-[#d4af37]" />
                  <div className="flex gap-1">
                     <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
-                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></span>
+                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
                     <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></span>
                  </div>
                </div>
