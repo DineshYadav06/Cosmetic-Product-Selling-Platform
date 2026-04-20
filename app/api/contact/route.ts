@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
     await connectToDatabase();
 
-    const newContact = await Contact.create({
+    const newContact = await (Contact as any).create({
       firstName,
       lastName,
       email,
