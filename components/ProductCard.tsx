@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
 import { useStore } from "../lib/context/StoreContext";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
   id: string;
@@ -27,9 +28,15 @@ export default function ProductCard({
   reviews,
 }: ProductCardProps) {
   const { addToCart } = useStore();
+  const router = useRouter();
 
   const handleAddToCart = () => {
     addToCart({ id, brand, name, price, originalPrice, image });
+  };
+
+  const handleBuyNow = () => {
+    addToCart({ id, brand, name, price, originalPrice, image });
+    router.push("/checkout");
   };
 
   return (
@@ -76,12 +83,20 @@ export default function ProductCard({
         </div>
       </div>
 
-      <button 
-        onClick={handleAddToCart}
-        className="w-full mt-5 bg-[#111] border border-[#d4af37] text-[#d4af37] text-[11px] font-bold uppercase tracking-[0.2em] py-3 opacity-0 group-hover:opacity-100 group-hover:bg-[#d4af37] group-hover:text-black transition-all transform translate-y-2 group-hover:translate-y-0 absolute bottom-5 left-0 right-0 max-w-[calc(100%-2.5rem)] mx-auto cursor-pointer shadow-[0_5px_15px_rgba(212,175,55,0.15)] z-10"
-      >
-        Add to Bag
-      </button>
+      <div className="w-full flex gap-2 absolute bottom-5 left-0 right-0 max-w-[calc(100%-2.5rem)] mx-auto opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 z-10">
+        <button 
+          onClick={handleBuyNow}
+          className="flex-1 bg-[#d4af37] text-black text-[10px] font-bold uppercase tracking-[0.1em] py-3 hover:bg-white transition-colors shadow-[0_5px_15px_rgba(212,175,55,0.15)]"
+        >
+          Buy Now
+        </button>
+        <button 
+          onClick={handleAddToCart}
+          className="flex-1 bg-[#111] border border-[#d4af37] text-[#d4af37] text-[10px] font-bold uppercase tracking-[0.1em] py-3 hover:bg-[#d4af37] hover:text-black transition-colors"
+        >
+          Add to Bag
+        </button>
+      </div>
     </div>
   );
 }
