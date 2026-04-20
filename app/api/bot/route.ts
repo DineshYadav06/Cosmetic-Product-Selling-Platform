@@ -107,7 +107,7 @@ ${productContext}`;
         let userMessageText = lastUserMsg.text;
         if (!userMessageText && lastUserMsg.image) userMessageText = "[Image Uploaded]";
         
-        await BotChat.create({
+        await (BotChat as any).create({
           userMessage: userMessageText || "Unknown",
           botReply: aiReply
         });
