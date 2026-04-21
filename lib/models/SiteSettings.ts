@@ -10,10 +10,10 @@ export interface ISiteSettings extends Document {
 
 const SiteSettingsSchema: Schema = new Schema({
   storeName: { type: String, default: 'GlowMart India' },
-  supportEmail: { type: String, default: 'help@glowmart.in' },
+  supportEmail: { type: String, default: 'help@glowmartindia2026.in' },
   announcementText: { type: String, default: 'FREE SHIPPING ON ALL ORDERS OVER ₹999' },
   heroOffer: { type: String, default: 'FLAT 50% OFF ON BESTSELLERS' },
-  freeShippingThreshold: { type: Number, default: 999 },
+  freeShippingThreshold: { type: Number, default: 1999 },
 }, { timestamps: true });
 
 const SiteSettings = (mongoose.models.SiteSettings as mongoose.Model<ISiteSettings>) || mongoose.model<ISiteSettings>('SiteSettings', SiteSettingsSchema);
