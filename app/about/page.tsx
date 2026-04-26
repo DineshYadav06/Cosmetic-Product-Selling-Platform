@@ -85,7 +85,7 @@ export default function AboutPage() {
       {/* Values */}
       <div className="bg-[#111] py-24 border-y border-[#222]">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <h3 className="text-2xl font-serif text-center uppercase tracking-[0.3em] font-bold mb-16 text-white text-shadow-sm">The GLOWMART Promise</h3>
+          <h3 className="text-2xl font-serif text-center uppercase tracking-[0.3em] font-bold mb-16 text-white text-shadow-sm">The GLOWMART INDIA Promise</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {VALUES.map(v => (
               <div key={v.title} className="bg-[#0a0a0a] border border-[#222] p-8 text-center group hover:-translate-y-2 transition-transform duration-300">
