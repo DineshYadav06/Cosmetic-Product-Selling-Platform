@@ -76,7 +76,7 @@ export default function AboutPage() {
               </p>
             </div>
             <Link href="/collection" className="mt-10 inline-block bg-[#d4af37] text-black px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(212,175,55,0.4)] hover:bg-white hover:shadow-none transition-all">
-              Explore The Collection
+              Explore The Collection OF THE GLOWMART INDIA 
             </Link>
           </div>
         </div>
