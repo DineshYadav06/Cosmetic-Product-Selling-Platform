@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Star, Truck, ShieldCheck, Heart } from "lucide-react";
 import { notFound } from "next/navigation";
 import ProductActions from "../../../components/ProductActions";
+import ReviewSection from "../../../components/ReviewSection";
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await connectToDatabase();
@@ -20,6 +21,13 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const product = await Product.findById(resolvedParams.id).lean();
   if (!product) {
     return notFound();
+  }
+
+  // Fetch seller info
+  let seller: any = null;
+  if (product.sellerId) {
+    const User = (await import("../../../lib/models/User")).default;
+    seller = await User.findById(product.sellerId).select('name sellerDetails').lean();
   }
 
   return (
@@ -95,6 +103,23 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
             {/* Description */}
             <div className="space-y-6">
+              {seller && seller.sellerDetails && (
+                <div className="border-t border-[#222] pt-6 group">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] text-[#444] uppercase tracking-widest font-bold mb-1">Curated by Artisan</p>
+                      <h4 className="text-white font-serif text-xl group-hover:text-[#d4af37] transition-colors">{seller.sellerDetails.storeName}</h4>
+                    </div>
+                    <a 
+                      href={`/store/${encodeURIComponent(seller.sellerDetails.storeName)}`}
+                      className="px-6 py-2 border border-[#333] text-[10px] font-bold uppercase tracking-widest hover:border-[#d4af37] transition-all"
+                    >
+                      Visit Boutique
+                    </a>
+                  </div>
+                </div>
+              )}
+
               <div className="border-t border-[#222] pt-6">
                  <h3 className="uppercase tracking-[0.2em] font-bold text-white mb-4 text-sm">The Story</h3>
                  <p className="text-[#999] font-light leading-relaxed text-sm">
@@ -149,72 +174,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           </div>
         </div>
 
-        {/* Customer Reviews Summary */}
-        <div className="mt-32 border-t border-[#222] pt-16">
-          <h2 className="text-2xl font-serif font-bold tracking-widest uppercase mb-10">
-            Customer Reviews
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-            <div className="col-span-1">
-              <div className="flex items-center gap-4 mb-4">
-                <span className="text-5xl font-serif font-bold text-[#d4af37]">{product.rating.toFixed(1)}</span>
-                <div className="flex flex-col">
-                  <div className="flex text-[#d4af37]">
-                    {[...Array(5)].map((_, i) => <Star key={i} size={16} fill={i < Math.floor(product.rating) ? "currentColor" : "none"} />)}
-                  </div>
-                  <span className="text-[#888] text-xs mt-1">Based on {product.reviews} reviews</span>
-                </div>
-              </div>
-
-              {/* Bars */}
-              <div className="space-y-3 mt-8">
-                {[
-                  { stars: 5, pct: 82 },
-                  { stars: 4, pct: 12 },
-                  { stars: 3, pct: 4 },
-                  { stars: 2, pct: 1 },
-                  { stars: 1, pct: 1 },
-                ].map(r => (
-                  <div key={r.stars} className="flex items-center gap-3 text-xs text-[#888]">
-                    <span className="w-12 text-right">{r.stars} star</span>
-                    <div className="flex-1 h-1.5 bg-[#111] overflow-hidden">
-                      <div className="h-full bg-[#d4af37]" style={{ width: `${r.pct}%` }} />
-                    </div>
-                    <span className="w-8">{r.pct}%</span>
-                  </div>
-                ))}
-              </div>
-              
-              <button className="w-full border border-[#333] text-white py-4 uppercase font-bold tracking-widest text-xs mt-10 hover:border-[#d4af37] transition-colors">
-                Write a Review
-              </button>
-            </div>
-
-            <div className="col-span-2 space-y-10">
-               {[
-                 { title: "Absolutely love it!", text: "This is easily one of my favorite purchases. The packaging is pure luxury and the product itself feels amazing.", author: "Priya S.", date: "March 20, 2026", rating: 5 },
-                 { title: "Worth every penny", text: "I was hesitant because of the price but after using it for a week, I can say it's 100% worth the hype.", author: "Ananya M.", date: "March 15, 2026", rating: 5 },
-                 { title: "Good, but heavily fragranced", text: "Performance is stellar but the scent is a bit too strong for my sensitive nose. Still a great product overall.", author: "Neha K.", date: "February 28, 2026", rating: 4 },
-               ].map((review, i) => (
-                 <div key={i} className="border-b border-[#111] pb-10">
-                   <div className="flex items-center gap-3 mb-3">
-                     <div className="flex text-[#d4af37]">
-                       {[...Array(5)].map((_, j) => <Star key={j} size={12} fill={j < review.rating ? "currentColor" : "none"} />)}
-                     </div>
-                     <span className="text-white font-bold tracking-wide text-sm">{review.title}</span>
-                   </div>
-                   <p className="text-[#888] font-light text-sm leading-relaxed mb-4">{review.text}</p>
-                   <div className="text-[#555] text-xs uppercase tracking-widest font-bold">
-                     {review.author} <span className="mx-2 font-normal">|</span> <span className="font-normal">{review.date}</span>
-                   </div>
-                 </div>
-               ))}
-               <button className="text-[#d4af37] text-xs font-bold uppercase tracking-widest hover:text-white transition-colors">
-                 Read All {product.reviews} Reviews →
-               </button>
-            </div>
-          </div>
-        </div>
+        {/* Dynamic Reviews Section */}
+        <ReviewSection 
+          productId={product._id.toString()} 
+          existingReviews={JSON.parse(JSON.stringify(product.reviewItems || []))} 
+        />
 
       </div>
       

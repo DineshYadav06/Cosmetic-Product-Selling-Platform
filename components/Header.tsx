@@ -183,8 +183,20 @@ export default function Header() {
               </Link>
             )}
             {user && mounted && (
-              <div className="hidden md:flex items-center gap-2 bg-[#d4af37] text-black px-4 py-1.5 text-xs font-bold uppercase tracking-widest">
-                Hi, {user.name.split(" ")[0]}
+              <div className="hidden md:flex items-center gap-4">
+                {user.role === 'admin' && (
+                  <Link href="/admin" className="bg-red-900/20 border border-red-800 text-red-400 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest hover:bg-red-800 hover:text-white transition-all">
+                    Admin Panel
+                  </Link>
+                )}
+                {user.role === 'seller' && (
+                  <Link href="/seller/dashboard" className="bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37] px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest hover:bg-[#d4af37] hover:text-black transition-all">
+                    Seller Dashboard
+                  </Link>
+                )}
+                <div className="bg-[#111] border border-[#222] text-[#d4af37] px-4 py-1.5 text-xs font-bold uppercase tracking-widest">
+                  Hi, {user.name.split(" ")[0]}
+                </div>
               </div>
             )}
           </div>
@@ -280,6 +292,16 @@ export default function Header() {
               {/* Mobile-only quick links */}
               <div className="border-t border-gray-200 mt-2 pt-2">
                 <h3 className="px-6 py-2 font-bold text-sm tracking-widest text-[#222]">Account</h3>
+                {user && user.role === 'admin' && (
+                  <Link href="/admin" onClick={() => setMenuOpen(false)} className="flex items-center justify-between px-6 py-3 text-sm text-red-600 font-bold hover:bg-gray-100">
+                    Admin Panel <ChevronRight size={15} />
+                  </Link>
+                )}
+                {user && user.role === 'seller' && (
+                  <Link href="/seller/dashboard" onClick={() => setMenuOpen(false)} className="flex items-center justify-between px-6 py-3 text-sm text-[#d4af37] font-bold hover:bg-gray-100">
+                    Seller Dashboard <ChevronRight size={15} />
+                  </Link>
+                )}
                 <Link href="/track" onClick={() => setMenuOpen(false)} className="flex items-center justify-between px-6 py-3 text-sm text-[#444] hover:bg-gray-100">
                   Track Order <ChevronRight size={15} className="text-gray-400" />
                 </Link>

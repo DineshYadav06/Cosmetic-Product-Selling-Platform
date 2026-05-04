@@ -23,6 +23,7 @@ export default function SellerSidebar() {
   const menuItems = [
     { name: "Dashboard", href: "/seller/dashboard", icon: LayoutDashboard },
     { name: "My Products", href: "/seller/products", icon: Package },
+    { name: "Add Product", href: "/seller/add-product", icon: ShoppingBag },
     { name: "Orders", href: "/seller/orders", icon: ShoppingBag },
     { name: "Analytics", href: "/seller/analytics", icon: BarChart3 },
     { name: "Subscription", href: "/seller/pricing", icon: Zap },

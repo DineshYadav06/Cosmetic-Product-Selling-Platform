@@ -17,6 +17,12 @@ export interface IProduct extends Document {
   benefits?: string;
   sellerId?: mongoose.Types.ObjectId;
   isFeatured?: boolean;
+  reviewItems?: Array<{
+    name: string;
+    rating: number;
+    comment: string;
+    createdAt: Date;
+  }>;
 }
 
 const ProductSchema: Schema = new Schema({
@@ -36,6 +42,14 @@ const ProductSchema: Schema = new Schema({
   benefits: { type: String },
   sellerId: { type: Schema.Types.ObjectId, ref: 'User' },
   isFeatured: { type: Boolean, default: false },
+  reviewItems: [
+    {
+      name: { type: String, required: true },
+      rating: { type: Number, required: true },
+      comment: { type: String, required: true },
+      createdAt: { type: Date, default: Date.now },
+    }
+  ],
 }, { timestamps: true });
 
 const Product = (mongoose.models.Product as mongoose.Model<IProduct>) || mongoose.model<IProduct>('Product', ProductSchema);
