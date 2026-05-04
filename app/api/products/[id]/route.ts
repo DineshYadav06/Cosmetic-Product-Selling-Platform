@@ -52,7 +52,8 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
         stockCount: body.stockCount !== undefined ? Number(body.stockCount) : 50,
         skinType: body.skinType || [],
         concerns: body.concerns || [],
-        benefits: body.benefits || ""
+        benefits: body.benefits || "",
+        sellerId: body.sellerId
       },
       { new: true } // Return updated document
     );

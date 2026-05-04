@@ -34,7 +34,8 @@ export async function POST(request: Request) {
       stockCount: body.stockCount !== undefined ? Number(body.stockCount) : 50,
       skinType: body.skinType || [],
       concerns: body.concerns || [],
-      benefits: body.benefits || ""
+      benefits: body.benefits || "",
+      sellerId: body.sellerId
     });
     
     await newProduct.save();
