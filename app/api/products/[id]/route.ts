@@ -48,7 +48,11 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
         image: body.image,
         description: body.description,
         category: body.category || 'General',
-        inStock: body.inStock !== undefined ? body.inStock : true
+        inStock: body.inStock !== undefined ? body.inStock : true,
+        stockCount: body.stockCount !== undefined ? Number(body.stockCount) : 50,
+        skinType: body.skinType || [],
+        concerns: body.concerns || [],
+        benefits: body.benefits || ""
       },
       { new: true } // Return updated document
     );

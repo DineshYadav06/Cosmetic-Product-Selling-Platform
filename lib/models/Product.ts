@@ -11,6 +11,12 @@ export interface IProduct extends Document {
   reviews: number;
   category: string;
   inStock: boolean;
+  stockCount: number;
+  skinType?: string[]; // e.g. ["Oily", "Dry"]
+  concerns?: string[]; // e.g. ["Acne", "Dark Spots"]
+  benefits?: string;
+  sellerId?: mongoose.Types.ObjectId;
+  isFeatured?: boolean;
 }
 
 const ProductSchema: Schema = new Schema({
@@ -24,6 +30,12 @@ const ProductSchema: Schema = new Schema({
   reviews: { type: Number, default: 0 },
   category: { type: String, required: true, default: "Fragrance" },
   inStock: { type: Boolean, default: true },
+  stockCount: { type: Number, default: 50 },
+  skinType: [{ type: String }],
+  concerns: [{ type: String }],
+  benefits: { type: String },
+  sellerId: { type: Schema.Types.ObjectId, ref: 'User' },
+  isFeatured: { type: Boolean, default: false },
 }, { timestamps: true });
 
 const Product = (mongoose.models.Product as mongoose.Model<IProduct>) || mongoose.model<IProduct>('Product', ProductSchema);

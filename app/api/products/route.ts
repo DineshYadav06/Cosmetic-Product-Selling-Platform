@@ -29,7 +29,12 @@ export async function POST(request: Request) {
       originalPrice: body.originalPrice ? Number(body.originalPrice) : undefined,
       image: body.image,
       category: body.category || 'General',
-      description: body.description || 'Premium Mens Fragrance'
+      description: body.description || '',
+      inStock: body.inStock !== undefined ? body.inStock : true,
+      stockCount: body.stockCount !== undefined ? Number(body.stockCount) : 50,
+      skinType: body.skinType || [],
+      concerns: body.concerns || [],
+      benefits: body.benefits || ""
     });
     
     await newProduct.save();

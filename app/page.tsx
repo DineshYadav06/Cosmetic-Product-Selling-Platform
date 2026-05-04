@@ -76,6 +76,43 @@ export default async function Home() {
       <div className="pt-8 pb-4">
         <ProductCarousel title="Bestsellers" products={displayBestsellers} />
       </div>
+
+      {/* AI Consultant CTA */}
+      <section className="max-w-[1920px] mx-auto px-4 md:px-8 py-16">
+        <div className="relative bg-[#0a0a0a] border border-[#1a1a1a] overflow-hidden p-8 md:p-20 flex flex-col md:flex-row items-center gap-12 group">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#d4af37]/10 blur-[100px] rounded-full group-hover:bg-[#d4af37]/20 transition-colors duration-700" />
+          
+          <div className="flex-1 z-10 text-center md:text-left">
+            <div className="inline-flex items-center gap-2 text-[#d4af37] mb-6 px-4 py-1.5 border border-[#d4af37]/30 bg-[#d4af37]/5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.3em]">AI-Powered Skincare</span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mb-6 leading-tight">
+              Analyze Your Skin <br /> with <span className="italic text-[#d4af37]">Glowmart AI</span>
+            </h2>
+            <p className="text-gray-400 text-lg mb-10 max-w-xl leading-relaxed">
+              Skip the guesswork. Our advanced AI scans your skin profile to recommend the perfect premium regimen tailored just for you.
+            </p>
+            <a 
+              href="/ai-consultant"
+              className="inline-flex items-center gap-4 bg-[#d4af37] text-black px-10 py-4 font-bold uppercase tracking-[0.2em] text-xs hover:bg-white transition-all shadow-[0_0_25px_rgba(212,175,55,0.2)]"
+            >
+              Start Free Analysis <div className="w-6 h-[1px] bg-black" />
+            </a>
+          </div>
+
+          <div className="flex-1 relative aspect-square w-full max-w-md z-10">
+             <div className="absolute inset-0 border border-[#d4af37]/20 translate-x-4 translate-y-4" />
+             <div className="absolute inset-0 border border-white/10 -translate-x-4 -translate-y-4" />
+             <Image 
+                src="https://images.unsplash.com/photo-1596462502278-27bf85033e5a?auto=format&fit=crop&q=80&w=800" 
+                alt="AI Skin Analysis" 
+                fill 
+                className="object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+             />
+             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+          </div>
+        </div>
+      </section>
       
       {/* Mid-page promotional banner layout matching Sephora */}
       <section className="max-w-[1920px] mx-auto px-4 md:px-8 py-12">
@@ -121,6 +158,53 @@ export default async function Home() {
       <div className="py-8 bg-gray-50 border-y border-gray-100">
         <ProductCarousel title="Just Dropped" products={displayNewArrivals} />
       </div>
+
+      {/* Become a Seller CTA */}
+      <section className="bg-black py-24 px-4 overflow-hidden relative">
+        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#d4af37] to-transparent opacity-50" />
+        <div className="max-w-7xl mx-auto text-center relative z-10">
+          <div className="inline-flex items-center gap-2 text-[#d4af37] mb-8">
+            <span className="h-[1px] w-8 bg-[#d4af37]" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.4em]">Partner with Excellence</span>
+            <span className="h-[1px] w-8 bg-[#d4af37]" />
+          </div>
+          <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mb-8 tracking-tight leading-tight">
+            Creators. Artisans. <br /> <span className="text-[#d4af37]">Global Entrepreneurs.</span>
+          </h2>
+          <p className="text-gray-500 text-lg mb-12 max-w-2xl mx-auto leading-relaxed">
+            Join the most sophisticated beauty network. List your products, reach elite customers, 
+            and scale your cosmetic boutique with our advanced AI tools.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <a 
+              href="/seller/register"
+              className="w-full sm:w-auto bg-[#d4af37] text-black px-12 py-5 font-bold uppercase tracking-widest text-xs hover:bg-white transition-all shadow-[0_0_30px_rgba(212,175,55,0.2)]"
+            >
+              Apply to Sell
+            </a>
+            <a 
+              href="/seller/pricing"
+              className="w-full sm:w-auto border border-white/20 text-white px-12 py-5 font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all"
+            >
+              View Tiers
+            </a>
+          </div>
+          
+          <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-40">
+             {[
+               { val: "10M+", label: "Luxury Seekers" },
+               { val: "2%", label: "Lowest Commission" },
+               { val: "24/7", label: "Concierge Support" },
+               { val: "AI", label: "Marketing Suite" }
+             ].map((stat, i) => (
+               <div key={i} className="text-center">
+                 <p className="text-2xl font-serif font-bold text-white">{stat.val}</p>
+                 <p className="text-[9px] uppercase tracking-widest text-[#d4af37] mt-1">{stat.label}</p>
+               </div>
+             ))}
+          </div>
+        </div>
+      </section>
 
       <Footer />
       

@@ -15,6 +15,8 @@ interface ProductCardProps {
   image: string;
   rating: number;
   reviews: number;
+  isAI?: boolean;
+  sellerPlan?: 'basic' | 'pro' | 'premium';
 }
 
 export default function ProductCard({
@@ -26,6 +28,8 @@ export default function ProductCard({
   image,
   rating,
   reviews,
+  isAI,
+  sellerPlan,
 }: ProductCardProps) {
   const { addToCart } = useStore();
   const router = useRouter();
@@ -52,6 +56,16 @@ export default function ProductCard({
           <span className="absolute top-2 left-2 bg-[#d4af37] text-black text-[10px] uppercase font-bold px-2 py-1 tracking-wider">
             Sale
           </span>
+        )}
+        {isAI && (
+          <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md border border-[#d4af37]/50 text-[#d4af37] text-[8px] uppercase font-bold px-2 py-1 tracking-[0.2em] animate-pulse">
+            AI Recommended
+          </div>
+        )}
+        {sellerPlan && sellerPlan !== 'basic' && (
+          <div className={`absolute bottom-2 left-2 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest border ${sellerPlan === 'premium' ? 'bg-white text-black border-white' : 'bg-[#d4af37]/10 text-[#d4af37] border-[#d4af37]/30'}`}>
+            {sellerPlan} Partner
+          </div>
         )}
       </Link>
       

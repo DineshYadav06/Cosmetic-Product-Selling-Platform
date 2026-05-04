@@ -28,6 +28,7 @@ interface StoreContextType {
   clearCart: () => void;
   cartTotal: number;
   cartCount: number;
+  addManyToCart: (items: Omit<CartItem, "quantity">[]) => void;
 
   // Wishlist
   wishlist: string[]; // array of product IDs
@@ -111,6 +112,24 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = () => setCart([]);
 
+  const addManyToCart = (items: Omit<CartItem, "quantity">[]) => {
+    setCart((prev) => {
+      let next = [...prev];
+      items.forEach(product => {
+        const existing = next.find((item) => item.id === product.id);
+        if (existing) {
+          next = next.map((item) =>
+            item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          );
+        } else {
+          next.push({ ...product, quantity: 1 });
+        }
+      });
+      return next;
+    });
+    setCartOpen(true);
+  };
+
   // Computed Cart
   const cartTotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -139,7 +158,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   return (
     <StoreContext.Provider
       value={{
-        cart, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal, cartCount,
+        cart, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal, cartCount, addManyToCart,
         wishlist, toggleWishlist, isInWishlist,
         user, login, logout,
         cartOpen, setCartOpen

@@ -4,13 +4,17 @@ import { Search, MapPin, Heart, ShoppingBag, User, Menu, X, ChevronRight, UserCi
 import Link from "next/link";
 import { useStore } from "../lib/context/StoreContext";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const { cartCount, wishlist, user, logout } = useStore();
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [announcement, setAnnouncement] = useState("FREE SHIPPING ON ALL ORDERS OVER ₹999");
+
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -18,6 +22,14 @@ export default function Header() {
       if(data && data.announcementText) setAnnouncement(data.announcementText);
     }).catch(() => {});
   }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchOpen(false);
+    }
+  };
 
   const drawerSections = [
     {
@@ -82,14 +94,16 @@ export default function Header() {
             </button>
 
             {/* Search bar - visible on desktop, hidden on mobile */}
-            <div className="relative hidden md:block max-w-sm w-full">
+            <form onSubmit={handleSearch} className="relative hidden md:block max-w-sm w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#666]" size={16} />
               <input
                 type="text"
                 placeholder="Search fragrances, brands..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
                 className="w-full bg-[#111] border border-[#333] rounded-sm py-2 pl-9 pr-4 text-sm text-white focus:outline-none focus:border-[#d4af37] transition-colors placeholder:text-[#666]"
               />
-            </div>
+            </form>
           </div>
 
           {/* Center: Logo */}
@@ -179,15 +193,17 @@ export default function Header() {
         {/* Mobile Search Bar — shown when search icon clicked */}
         {searchOpen && (
           <div className="md:hidden px-3 pb-3">
-            <div className="relative">
+            <form onSubmit={handleSearch} className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#666]" size={16} />
               <input
                 type="text"
                 placeholder="Search fragrances, brands..."
                 autoFocus
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
                 className="w-full bg-[#111] border border-[#d4af37] rounded-sm py-2.5 pl-9 pr-4 text-sm text-white focus:outline-none placeholder:text-[#666]"
               />
-            </div>
+            </form>
           </div>
         )}
 
@@ -198,6 +214,7 @@ export default function Header() {
               { label: "Home", href: "/" },
               { label: "About", href: "/about" },
               { label: "New Arrivals", href: "/collection?category=New Arrivals" },
+              { label: "AI Skin Analysis", href: "/ai-consultant", premium: true },
               { label: "Bestsellers", href: "/collection?category=Bestsellers" },
               { label: "Niche Fragrances", href: "/collection?category=Niche Fragrances" },
               { label: "Designer", href: "/collection?category=Designer" },
@@ -207,7 +224,7 @@ export default function Header() {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`text-[12px] font-semibold tracking-wide whitespace-nowrap px-2.5 py-1 hover:outline outline-1 outline-white flex-shrink-0 ${(item as any).red ? "text-red-400" : "text-[#eee]"}`}
+                className={`text-[12px] font-semibold tracking-wide whitespace-nowrap px-2.5 py-1 hover:outline outline-1 outline-white flex-shrink-0 ${(item as any).red ? "text-red-400" : (item as any).premium ? "text-[#d4af37] border border-[#d4af37]/30 bg-[#d4af37]/5 animate-pulse" : "text-[#eee]"}`}
               >
                 {item.label}
               </Link>

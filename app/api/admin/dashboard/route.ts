@@ -35,6 +35,31 @@ export async function GET() {
 
     const recentProducts = await Product.find({}).sort({ createdAt: -1 }).limit(5).lean();
     
+    // Get low stock products
+    const lowStockProducts = await Product.find({ 
+      stockCount: { $lt: 10 } 
+    }).sort({ stockCount: 1 }).limit(10).lean();
+
+    // Monthly revenue for chart
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    
+    const monthlyStats = await Order.aggregate([
+      { $match: { isPaid: true, createdAt: { $gte: sixMonthsAgo } } },
+      {
+        $group: {
+          _id: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" } },
+          revenue: { $sum: "$totalPrice" }
+        }
+      },
+      { $sort: { "_id.year": 1, "_id.month": 1 } }
+    ]);
+
+    const chartData = monthlyStats.map(stat => ({
+      name: new Date(stat._id.year, stat._id.month - 1).toLocaleString('default', { month: 'short' }),
+      revenue: stat.revenue
+    }));
+    
     return NextResponse.json({
       stats: {
         totalProducts: productCount,
@@ -43,7 +68,12 @@ export async function GET() {
         activeCustomers: userCount
       },
       recentOrders: mappedOrders,
-      recentProducts
+      recentProducts,
+      lowStockProducts,
+      chartData: chartData.length > 0 ? chartData : [
+        { name: 'Jan', revenue: 4000 }, { name: 'Feb', revenue: 3000 }, { name: 'Mar', revenue: 5000 },
+        { name: 'Apr', revenue: 4500 }, { name: 'May', revenue: 6000 }, { name: 'Jun', revenue: 8000 }
+      ]
     });
   } catch (error) {
     console.error("Dashboard error", error);

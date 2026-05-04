@@ -14,7 +14,15 @@ export interface IUser extends Document {
   building?: string;
   landmark?: string;
   location?: string;
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'seller';
+  sellerDetails?: {
+    storeName: string;
+    phone: string;
+    plan: 'basic' | 'pro' | 'premium';
+    isApproved: boolean;
+    joinedAt: Date;
+    earnings: number;
+  };
   cart: {
     product: mongoose.Types.ObjectId;
     quantity: number;
@@ -35,7 +43,15 @@ const UserSchema: Schema = new Schema({
   building: { type: String },
   landmark: { type: String },
   location: { type: String },
-  role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  role: { type: String, enum: ['user', 'admin', 'seller'], default: 'user' },
+  sellerDetails: {
+    storeName: { type: String },
+    phone: { type: String },
+    plan: { type: String, enum: ['basic', 'pro', 'premium'], default: 'basic' },
+    isApproved: { type: Boolean, default: false },
+    joinedAt: { type: Date, default: Date.now },
+    earnings: { type: Number, default: 0 }
+  },
   cart: [{
     product: { type: Schema.Types.ObjectId, ref: 'Product' },
     quantity: { type: Number, default: 1 }
