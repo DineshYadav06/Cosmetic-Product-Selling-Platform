@@ -13,8 +13,10 @@ import {
   MessageSquare,
   Loader2,
   Package,
-  Award
+  Award,
+  ChevronLeft
 } from "lucide-react";
+import Link from "next/link";
 
 export default function StorePage({ params }: { params: { name: string } }) {
   const [data, setData] = useState<any>(null);
@@ -71,7 +73,12 @@ export default function StorePage({ params }: { params: { name: string } }) {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       <Header />
-      
+      <div className="bg-[#0a0a0a] px-4 md:px-8 py-4 border-b border-[#1a1a1a]">
+        <Link href="/" className="inline-flex items-center gap-2 text-[#666] hover:text-[#d4af37] transition-colors text-[10px] font-bold uppercase tracking-[0.3em]">
+          <ChevronLeft size={14} /> Back to Marketplace
+        </Link>
+      </div>
+
       {/* Store Hero */}
       <div className="relative h-80 w-full overflow-hidden border-b border-[#1a1a1a]">
         <div className="absolute inset-0 bg-[#0d0d0d]">

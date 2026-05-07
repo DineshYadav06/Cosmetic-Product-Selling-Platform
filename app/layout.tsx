@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { StoreProvider } from "../lib/context/StoreContext";
 import Chatbot from "../components/Chatbot";
+import CustomCursor from "../components/CustomCursor";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <StoreProvider>
+          <CustomCursor />
           {children}
           <Chatbot />
         </StoreProvider>

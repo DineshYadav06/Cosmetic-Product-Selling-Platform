@@ -14,34 +14,34 @@ import {
   AlertCircle
 } from "lucide-react";
 import Link from "next/link";
+import AnalyticsChart from "../../../components/seller/AnalyticsChart";
 
 export default function SellerDashboard() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const iconMap: any = {
+    IndianRupee,
+    ShoppingBag,
+    Package,
+    TrendingUp
+  };
+
   useEffect(() => {
-    // Simulated fetch - in real app, fetch from /api/seller/dashboard
-    setTimeout(() => {
-      setData({
-        stats: [
-          { label: "Total Revenue", value: "₹45,800", icon: IndianRupee, color: "#d4af37", change: "+12.5%" },
-          { label: "Active Orders", value: "18", icon: ShoppingBag, color: "#4ade80", change: "4 pending" },
-          { label: "Product Inventory", value: "124", icon: Package, color: "#60a5fa", change: "3 low stock" },
-          { label: "Conversion Rate", value: "3.2%", icon: TrendingUp, color: "#f472b6", change: "+0.4%" },
-        ],
-        recentOrders: [
-          { id: "ORD-9821", customer: "Aria Sharma", status: "Paid", amount: "₹2,499", time: "2 hours ago" },
-          { id: "ORD-9818", customer: "Vikram Malhotra", status: "Processing", amount: "₹4,120", time: "5 hours ago" },
-          { id: "ORD-9815", customer: "Priya Das", status: "Shipped", amount: "₹1,850", time: "1 day ago" },
-        ],
-        topProducts: [
-          { name: "Golden Aura Serum", sales: 42, revenue: "₹14,658" },
-          { name: "Midnight Rose EDP", sales: 31, revenue: "₹9,269" },
-          { name: "Velvet Matte Lipstick", sales: 28, revenue: "₹4,172" },
-        ]
-      });
-      setLoading(false);
-    }, 1000);
+    async function fetchDashboardData() {
+      try {
+        const res = await fetch("/api/seller/dashboard");
+        const json = await res.json();
+        if (res.ok) {
+          setData(json);
+        }
+      } catch (error) {
+        console.error("Failed to fetch dashboard data", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchDashboardData();
   }, []);
 
   return (
@@ -57,33 +57,69 @@ export default function SellerDashboard() {
 
         {/* Top Header */}
         <div className="bg-[#0a0a0a] border-b border-[#1a1a1a] px-8 py-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-serif font-bold tracking-widest uppercase">Commerce Overview</h1>
-            <p className="text-[#444] text-[10px] uppercase tracking-[0.3em] font-bold mt-1">Management Suite v2.0</p>
+          <div className="flex items-center gap-8">
+            <div>
+              <h1 className="text-2xl font-serif font-bold tracking-widest uppercase">Commerce Overview</h1>
+              <p className="text-[#444] text-[10px] uppercase tracking-[0.3em] font-bold mt-1">Management Suite v2.0</p>
+            </div>
+            
+            {/* Membership Card */}
+            <div className="hidden md:flex items-center bg-gradient-to-br from-[#1a1a1a] to-black border border-[#d4af37]/20 p-3 px-6 rounded-sm shadow-[0_0_20px_rgba(212,175,55,0.1)] group hover:border-[#d4af37]/50 transition-all">
+               <div className="flex flex-col">
+                  <span className="text-[8px] font-bold text-[#d4af37] uppercase tracking-[0.3em]">Artisan Tier</span>
+                  <span className="text-xs font-bold text-white uppercase tracking-widest">Premium Gold</span>
+               </div>
+               <div className="h-8 w-[1px] bg-[#1a1a1a] mx-4" />
+               <div className="w-10 h-10 rounded-full border border-[#d4af37]/30 flex items-center justify-center bg-black overflow-hidden relative">
+                  <TrendingUp size={16} className="text-[#d4af37] animate-pulse" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#d4af37]/10 to-transparent" />
+               </div>
+            </div>
           </div>
+          
           <div className="flex gap-4">
-            <Link href="/seller/products/add" className="px-6 py-2.5 bg-[#d4af37] text-black text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all">
+            <Link href="/seller/add-product" className="px-6 py-2.5 bg-[#d4af37] text-black text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all">
               Add New Product
             </Link>
           </div>
         </div>
 
         <div className="p-8 space-y-10">
+          {/* Revenue Trend */}
+          <div className="bg-[#0a0a0a] border border-[#1a1a1a] p-8">
+            <div className="flex justify-between items-center mb-8">
+              <div>
+                <h2 className="font-serif font-bold tracking-widest text-sm uppercase">Revenue Growth</h2>
+                <p className="text-[#444] text-[8px] uppercase tracking-widest font-bold mt-1">7-Day Performance Insight</p>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-[#d4af37] rounded-full" />
+                  <span className="text-[9px] uppercase font-bold text-white tracking-widest">Revenue</span>
+                </div>
+              </div>
+            </div>
+            {data?.trendData && <AnalyticsChart data={data.trendData} />}
+          </div>
+
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            {data?.stats.map((stat: any, i: number) => (
-              <div key={i} className="bg-[#0a0a0a] border border-[#1a1a1a] p-6 hover:border-[#333] transition-all group relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-[1px]" style={{ background: `linear-gradient(to right, transparent, ${stat.color}, transparent)` }} />
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-2 rounded-sm bg-[#111] border border-[#1a1a1a]">
-                    <stat.icon size={20} style={{ color: stat.color }} />
+            {data?.stats.map((stat: any, i: number) => {
+              const Icon = iconMap[stat.icon] || Package;
+              return (
+                <div key={i} className="bg-[#0a0a0a] border border-[#1a1a1a] p-6 hover:border-[#333] transition-all group relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-[1px]" style={{ background: `linear-gradient(to right, transparent, ${stat.color}, transparent)` }} />
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="p-2 rounded-sm bg-[#111] border border-[#1a1a1a]">
+                      <Icon size={20} style={{ color: stat.color }} />
+                    </div>
+                    <span className="text-[10px] font-bold text-green-400 bg-green-950/30 px-2 py-0.5 border border-green-900">{stat.change}</span>
                   </div>
-                  <span className="text-[10px] font-bold text-green-400 bg-green-950/30 px-2 py-0.5 border border-green-900">{stat.change}</span>
+                  <h3 className="text-3xl font-serif font-bold text-white mb-1">{stat.value}</h3>
+                  <p className="text-[#444] text-[10px] uppercase tracking-widest font-bold">{stat.label}</p>
                 </div>
-                <h3 className="text-3xl font-serif font-bold text-white mb-1">{stat.value}</h3>
-                <p className="text-[#444] text-[10px] uppercase tracking-widest font-bold">{stat.label}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
@@ -107,15 +143,17 @@ export default function SellerDashboard() {
                     <tbody className="divide-y divide-[#0f0f0f]">
                       {data?.recentOrders.map((order: any) => (
                         <tr key={order.id} className="hover:bg-[#111] transition-colors group">
-                          <td className="px-6 py-4 text-xs font-mono text-[#d4af37]">{order.id}</td>
+                          <td className="px-6 py-4 text-xs font-mono text-[#d4af37] truncate max-w-[100px]">{order.id}</td>
                           <td className="px-6 py-4">
                             <p className="text-xs font-bold text-white uppercase tracking-widest">{order.customer}</p>
-                            <p className="text-[9px] text-[#444] flex items-center gap-1 mt-1"><Clock size={10} /> {order.time}</p>
+                            <p className="text-[9px] text-[#444] flex items-center gap-1 mt-1">
+                              <Clock size={10} /> {new Date(order.createdAt).toLocaleDateString()}
+                            </p>
                           </td>
-                          <td className="px-6 py-4 text-sm font-serif font-bold text-white">{order.amount}</td>
+                          <td className="px-6 py-4 text-sm font-serif font-bold text-white">₹{order.amount.toLocaleString()}</td>
                           <td className="px-6 py-4">
                             <span className={`px-2 py-1 text-[9px] font-bold uppercase tracking-widest border 
-                              ${order.status === 'Paid' ? 'text-green-400 bg-green-950/20 border-green-900' : 'text-yellow-400 bg-yellow-950/20 border-yellow-900'}`}>
+                              ${order.status === 'Paid' || order.status === 'Completed' ? 'text-green-400 bg-green-950/20 border-green-900' : 'text-yellow-400 bg-yellow-950/20 border-yellow-900'}`}>
                               {order.status}
                             </span>
                           </td>

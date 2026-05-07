@@ -22,6 +22,16 @@ export interface IUser extends Document {
     isApproved: boolean;
     joinedAt: Date;
     earnings: number;
+    businessType?: string;
+    gstNumber?: string;
+    panNumber?: string;
+    businessAddress?: string;
+    bankDetails?: {
+      accountHolder: string;
+      accountNumber: string;
+      ifscCode: string;
+      bankName: string;
+    };
   };
   cart: {
     product: mongoose.Types.ObjectId;
@@ -50,7 +60,17 @@ const UserSchema: Schema = new Schema({
     plan: { type: String, enum: ['basic', 'pro', 'premium'], default: 'basic' },
     isApproved: { type: Boolean, default: false },
     joinedAt: { type: Date, default: Date.now },
-    earnings: { type: Number, default: 0 }
+    earnings: { type: Number, default: 0 },
+    businessType: { type: String },
+    gstNumber: { type: String },
+    panNumber: { type: String },
+    businessAddress: { type: String },
+    bankDetails: {
+      accountHolder: { type: String },
+      accountNumber: { type: String },
+      ifscCode: { type: String },
+      bankName: { type: String }
+    }
   },
   cart: [{
     product: { type: Schema.Types.ObjectId, ref: 'Product' },

@@ -1,34 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import { Star, Loader2, CheckCircle } from "lucide-react";
+import { Star, Loader2, CheckCircle, Lock } from "lucide-react";
+import { useStore } from "../lib/context/StoreContext";
 
 export default function ReviewSection({ productId, existingReviews = [] }: { productId: string, existingReviews: any[] }) {
+  const { user } = useStore();
   const [reviews, setReviews] = useState(existingReviews);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
-  const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!rating || !comment || !name) return;
+    if (!rating || !comment || !user) return;
 
     setLoading(true);
     try {
-      const res = await fetch(`/api/products/${productId}/review`, {
+      const res = await fetch(`/api/products/${productId}/reviews`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, rating, comment })
+        body: JSON.stringify({ rating, comment })
       });
       const data = await res.json();
       if (res.ok) {
-        setReviews(data.reviewItems || []);
+        setReviews(data.product.reviewItems || []);
         setSubmitted(true);
         setComment("");
-        setName("");
         setRating(0);
       }
     } catch (err) {
@@ -46,7 +46,18 @@ export default function ReviewSection({ productId, existingReviews = [] }: { pro
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
         <div className="col-span-1">
-          {submitted ? (
+          {!user ? (
+            <div className="bg-[#111] border border-[#222] p-8 text-center">
+              <Lock size={32} className="text-[#444] mx-auto mb-4" />
+              <p className="text-[#888] text-[10px] uppercase tracking-widest leading-relaxed mb-6">Please login to share your experience</p>
+              <a 
+                href="/login" 
+                className="inline-block w-full border border-[#d4af37] text-[#d4af37] py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-[#d4af37] hover:text-black transition-all"
+              >
+                Login to Review
+              </a>
+            </div>
+          ) : submitted ? (
             <div className="bg-[#d4af37]/10 border border-[#d4af37]/30 p-8 text-center animate-pulse">
               <CheckCircle size={40} className="text-[#d4af37] mx-auto mb-4" />
               <h3 className="text-white font-bold uppercase tracking-widest text-xs mb-2">Thank You!</h3>
@@ -85,14 +96,6 @@ export default function ReviewSection({ productId, existingReviews = [] }: { pro
               </div>
 
               <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Your Name"
-                  required
-                  className="w-full bg-[#0a0a0a] border border-[#1a1a1a] p-4 text-xs focus:border-[#d4af37] focus:outline-none transition-all uppercase tracking-widest text-white"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
                 <textarea
                   placeholder="Share your experience with this product..."
                   required

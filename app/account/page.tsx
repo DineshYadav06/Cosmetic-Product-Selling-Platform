@@ -4,7 +4,7 @@ import { useStore } from "../../lib/context/StoreContext";
 import AuthPage from "../auth/page";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { Package, Heart, MapPin, LogOut } from "lucide-react";
+import { Package, Heart, MapPin, LogOut, Store, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -79,6 +79,24 @@ export default function AccountPage() {
                   <h3 className="font-bold text-xl mb-1">Addresses</h3>
                   <p className="text-sm text-gray-500">Edit addresses for orders</p>
                </div>
+
+               {user.role !== 'seller' && (
+                 <Link href="/seller/register" className="bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a] p-6 border border-[#d4af37]/30 shadow-lg hover:border-[#d4af37] transition-all cursor-pointer group col-span-1 sm:col-span-2 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                      <Store size={80} className="text-[#d4af37]" />
+                    </div>
+                    <div className="relative z-10">
+                      <div className="bg-[#d4af37]/10 w-12 h-12 rounded-full flex items-center justify-center text-[#d4af37] mb-4 group-hover:bg-[#d4af37] group-hover:text-black transition-colors">
+                         <Store size={20} />
+                      </div>
+                      <h3 className="font-bold text-xl mb-1 text-white">Become a Seller</h3>
+                      <p className="text-sm text-gray-400 max-w-md">Start your luxury beauty business on GLOWMART. Reach millions of customers and grow your brand with our premium platform.</p>
+                      <div className="mt-4 inline-flex items-center gap-2 text-[#d4af37] font-bold text-xs uppercase tracking-widest group-hover:gap-4 transition-all">
+                        Establish Your Store <ArrowRight size={14} />
+                      </div>
+                    </div>
+                 </Link>
+               )}
             </div>
 
             <div className="bg-white p-8 border border-gray-200 shadow-sm mt-4">

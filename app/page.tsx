@@ -2,6 +2,7 @@ import Header from "../components/Header";
 import Hero from "../components/Hero";
 import ProductCarousel from "../components/ProductCarousel";
 import Footer from "../components/Footer";
+import LiveSalesFeed from "../components/LiveSalesFeed";
 import Image from "next/image";
 import connectToDatabase from "../lib/mongodb";
 import Product from "../lib/models/Product";
@@ -22,16 +23,16 @@ export default async function Home() {
     console.warn("DB not connected or empty, showing beautiful fallback mock products");
     allProducts = [
       {
-        _id: "mock1", category: "Bestsellers", name: "Luminous Night Serum", brand: "GlowRecipe", price: 1599, originalPrice: 2499, image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=600", rating: 4.8, reviews: 124
+        _id: "csv1", category: "Fragrance", name: "Carlton London Incense Eau da parfum", brand: "Carlton London", price: 599, originalPrice: 999, image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=600", rating: 3.9, reviews: 19
       },
       {
-         _id: "mock2", category: "Bestsellers", name: "Velvet Matte Lipstick", brand: "MAC", price: 899, image: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&q=80&w=600", rating: 4.5, reviews: 56
+         _id: "csv2", category: "Fragrance", name: "Denver Black Code Perfume", brand: "Denver", price: 245, originalPrice: 499, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=600", rating: 4.2, reviews: 61
       },
       {
-         _id: "mock3", category: "Just Dropped", name: "Golden Aura Perfume", brand: "Dior", price: 4500, image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=600", rating: 5.0, reviews: 312
+         _id: "csv3", category: "Skincare", name: "Deadsea Mud Purifying Mud Soap", brand: "Ahava", price: 980, originalPrice: 1500, image: "https://images.unsplash.com/photo-1600857062241-98e5dba7f214?auto=format&fit=crop&q=80&w=600", rating: 4.7, reviews: 28
       },
       {
-         _id: "mock4", category: "Just Dropped", name: "Hydrating Face Cream", brand: "Rare Beauty", price: 1250, image: "https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&q=80&w=600", rating: 4.2, reviews: 89
+         _id: "csv4", category: "Skincare", name: "Natural Dead Sea Bath Salts", brand: "Ahava", price: 980, originalPrice: 1500, image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&q=80&w=600", rating: 4.0, reviews: 1
       }
     ];
   }
@@ -159,6 +160,44 @@ export default async function Home() {
         <ProductCarousel title="Just Dropped" products={displayNewArrivals} />
       </div>
 
+      {/* Featured Artisan Section */}
+      <section className="max-w-[1920px] mx-auto px-4 md:px-8 py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 border border-[#1a1a1a]">
+          <div className="relative aspect-square md:aspect-auto h-full min-h-[500px] overflow-hidden">
+             <Image 
+               src="https://images.unsplash.com/photo-1573461160327-b450ce3d8e7f?auto=format&fit=crop&q=80&w=800" 
+               alt="Artisan at work" 
+               fill 
+               className="object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+             />
+             <div className="absolute inset-0 bg-black/40" />
+             <div className="absolute bottom-12 left-12">
+                <p className="text-[#d4af37] text-xs font-bold uppercase tracking-[0.4em] mb-2">Artisan of the Month</p>
+                <h3 className="text-4xl font-serif font-bold text-white uppercase tracking-tighter">Radha K.</h3>
+             </div>
+          </div>
+          <div className="bg-[#050505] p-12 md:p-24 flex flex-col justify-center relative overflow-hidden">
+             <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#d4af37]/5 blur-[100px] rounded-full" />
+             <div className="relative z-10">
+                <span className="text-6xl font-serif text-[#d4af37]/20 leading-none">“</span>
+                <p className="text-2xl md:text-3xl font-serif text-white/90 leading-relaxed italic mb-8 -mt-6">
+                  Every jar of Saffron Glow is hand-poured in small batches, honoring the traditions passed down through generations in my family.
+                </p>
+                <div className="h-[1px] w-12 bg-[#d4af37] mb-8" />
+                <p className="text-gray-500 text-sm uppercase tracking-widest leading-loose mb-12">
+                  Based in Jaipur, Radha specializes in cold-pressed botanical oils. Her products are exclusively available on Glowmart as part of our 'Heritage Beauty' collection.
+                </p>
+                <a 
+                  href="/store/heritage-botanicals"
+                  className="inline-flex items-center gap-4 text-[#d4af37] text-xs font-bold uppercase tracking-[0.3em] group"
+                >
+                  Explore Her Boutique <div className="w-8 h-[1px] bg-[#d4af37] group-hover:w-16 transition-all" />
+                </a>
+             </div>
+          </div>
+        </div>
+      </section>
+
       {/* Become a Seller CTA */}
       <section className="bg-black py-24 px-4 overflow-hidden relative">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#d4af37] to-transparent opacity-50" />
@@ -207,6 +246,7 @@ export default async function Home() {
       </section>
 
       <Footer />
+      <LiveSalesFeed />
       
       <style dangerouslySetInnerHTML={{__html: `
         .hide-scrollbar::-webkit-scrollbar {

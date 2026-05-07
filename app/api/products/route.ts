@@ -1,6 +1,23 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '../../../lib/mongodb';
 import Product from '../../../lib/models/Product';
+import { verifyAuth, hasRole } from '../../../lib/utils/auth';
+import { z } from 'zod';
+
+const productSchema = z.object({
+  brand: z.string().min(1, "Brand is required"),
+  name: z.string().min(1, "Name is required"),
+  price: z.number().positive("Price must be positive"),
+  originalPrice: z.number().optional(),
+  image: z.string().url("Valid image URL is required"),
+  category: z.string().optional(),
+  description: z.string().optional(),
+  inStock: z.boolean().optional(),
+  stockCount: z.number().nonnegative().optional(),
+  skinType: z.array(z.string()).optional(),
+  concerns: z.array(z.string()).optional(),
+  benefits: z.string().optional(),
+});
 
 export async function GET(request: Request) {
   try {
@@ -19,28 +36,26 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const user = await verifyAuth();
+    if (!user || !hasRole(user, ['admin', 'seller'])) {
+      return NextResponse.json({ error: 'Unauthorized: Sellers and Admins only' }, { status: 403 });
+    }
+
     await connectToDatabase();
-    const body = await request.json();
+    const json = await request.json();
+    const body = productSchema.parse(json);
     
     const newProduct = new Product({
-      brand: body.brand,
-      name: body.name,
-      price: Number(body.price),
-      originalPrice: body.originalPrice ? Number(body.originalPrice) : undefined,
-      image: body.image,
-      category: body.category || 'General',
-      description: body.description || '',
-      inStock: body.inStock !== undefined ? body.inStock : true,
-      stockCount: body.stockCount !== undefined ? Number(body.stockCount) : 50,
-      skinType: body.skinType || [],
-      concerns: body.concerns || [],
-      benefits: body.benefits || "",
-      sellerId: body.sellerId
+      ...body,
+      sellerId: user.userId // Link product to the authenticated seller
     });
     
     await newProduct.save();
     return NextResponse.json(newProduct, { status: 201 });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
+    }
     console.error(error);
     return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
   }

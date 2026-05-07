@@ -3,7 +3,8 @@ import Footer from "../../../components/Footer";
 import Product from "../../../lib/models/Product";
 import connectToDatabase from "../../../lib/mongodb";
 import Image from "next/image";
-import { Star, Truck, ShieldCheck, Heart } from "lucide-react";
+import Link from "next/link";
+import { Star, Truck, ShieldCheck, Heart, ChevronLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import ProductActions from "../../../components/ProductActions";
 import ReviewSection from "../../../components/ReviewSection";
@@ -34,7 +35,13 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     <main className="min-h-screen bg-black text-white selection:bg-[#d4af37] selection:text-black">
       <Header />
       
-      <div className="max-w-[1920px] mx-auto px-4 md:px-8 py-10">
+      <div className="max-w-[1920px] mx-auto px-4 md:px-8 py-6">
+        <Link 
+          href="/" 
+          className="inline-flex items-center gap-2 text-[#666] hover:text-[#d4af37] transition-colors text-[10px] font-bold uppercase tracking-[0.3em] mb-4"
+        >
+          <ChevronLeft size={14} /> Back to Collection
+        </Link>
         <div className="flex flex-col md:flex-row gap-12 lg:gap-20">
           {/* Left Column - Product Image */}
           <div className="w-full md:w-1/2 flex justify-center sticky top-28 h-fit">

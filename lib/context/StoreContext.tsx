@@ -14,8 +14,10 @@ type CartItem = {
 };
 
 type UserState = {
+  id?: string;
   name: string;
   email: string;
+  role: 'user' | 'admin' | 'seller';
   token: string | null;
 } | null;
 
@@ -68,7 +70,20 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
       const token = localStorage.getItem("glowmart_token");
       if (token) {
-        setUser({ name: "Demo User", email: "user@example.com", token }); // Mock user recovery
+        fetch("/api/auth/me", {
+          headers: { "Authorization": `Bearer ${token}` }
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.user) {
+            setUser({ ...data.user, token });
+          } else {
+            localStorage.removeItem("glowmart_token");
+          }
+        })
+        .catch(() => {
+          localStorage.removeItem("glowmart_token");
+        });
       }
     } catch (e) {
       console.error("Failed to load local state", e);

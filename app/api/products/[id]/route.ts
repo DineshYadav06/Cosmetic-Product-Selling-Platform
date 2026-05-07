@@ -2,12 +2,11 @@ import { NextResponse } from 'next/server';
 import connectToDatabase from '../../../../lib/mongodb';
 import Product from '../../../../lib/models/Product';
 import mongoose from 'mongoose';
+import { verifyAuth, hasRole } from '../../../../lib/utils/auth';
 
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     await connectToDatabase();
-    
-    // Await the entire params object before accessing id
     const params = await context.params;
     const { id } = params;
     
@@ -28,12 +27,27 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
 
 export async function PUT(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
+    const user = await verifyAuth();
+    if (!user || !hasRole(user, ['admin', 'seller'])) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
     await connectToDatabase();
     const params = await context.params;
     const { id } = params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: 'Invalid Product ID format' }, { status: 400 });
+    }
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+    }
+
+    // Check ownership: Only Admin or the Seller who created the product can edit
+    if (user.role !== 'admin' && product.sellerId?.toString() !== user.userId) {
+      return NextResponse.json({ error: 'Forbidden: You do not own this product' }, { status: 403 });
     }
 
     const body = await request.json();
@@ -47,20 +61,15 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
         originalPrice: body.originalPrice ? Number(body.originalPrice) : undefined,
         image: body.image,
         description: body.description,
-        category: body.category || 'General',
+        category: body.category,
         inStock: body.inStock !== undefined ? body.inStock : true,
         stockCount: body.stockCount !== undefined ? Number(body.stockCount) : 50,
         skinType: body.skinType || [],
         concerns: body.concerns || [],
         benefits: body.benefits || "",
-        sellerId: body.sellerId
       },
-      { new: true } // Return updated document
+      { new: true }
     );
-
-    if (!updatedProduct) {
-      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
-    }
 
     return NextResponse.json(updatedProduct);
   } catch (error) {
@@ -71,6 +80,11 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
 
 export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
+    const user = await verifyAuth();
+    if (!user || !hasRole(user, ['admin', 'seller'])) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
     await connectToDatabase();
     const params = await context.params;
     const { id } = params;
@@ -79,12 +93,17 @@ export async function DELETE(request: Request, context: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Invalid Product ID format' }, { status: 400 });
     }
 
-    const deletedProduct = await Product.findByIdAndDelete(id);
-
-    if (!deletedProduct) {
-      return NextResponse.json({ error: 'Product not found or already deleted' }, { status: 404 });
+    const product = await Product.findById(id);
+    if (!product) {
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
+    // Only Admin or the Seller who created the product can delete
+    if (user.role !== 'admin' && product.sellerId?.toString() !== user.userId) {
+      return NextResponse.json({ error: 'Forbidden: You do not own this product' }, { status: 403 });
+    }
+
+    await Product.findByIdAndDelete(id);
     return NextResponse.json({ message: 'Product successfully deleted' });
   } catch (error) {
     console.error(error);

@@ -61,6 +61,9 @@ export default function Header() {
         {/* Top Utility Bar — hidden on mobile */}
         <div className="hidden sm:block bg-[#111] text-[#a0a0a0] text-xs py-2 px-4 md:px-8 border-b border-[#222]">
           <div className="max-w-full mx-auto flex justify-end gap-6 items-center uppercase tracking-wider font-semibold">
+            {(!user || user.role !== 'admin') && (
+              <Link href="/seller/register" className="text-[#d4af37] hover:text-white transition-colors border-r border-[#333] pr-6">Sell on GLOWMART</Link>
+            )}
             <Link href="/track" className="hover:text-[#d4af37] transition-colors">Track Order</Link>
             <div className="flex gap-6">
               {mounted && user ? (

@@ -21,21 +21,41 @@ export default function SellerProducts() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    // Simulated fetch - in real app, fetch from /api/seller/products
-    setTimeout(() => {
-      setProducts([
-        { _id: "1", name: "Midnight Rose EDP", brand: "Luxe Bloom", price: 2999, stockCount: 45, category: "Fragrance", isFeatured: true, image: "/p1.jpg" },
-        { _id: "2", name: "Golden Aura Serum", brand: "Luxe Bloom", price: 1850, stockCount: 3, category: "Skincare", isFeatured: false, image: "/p2.jpg" },
-        { _id: "3", name: "Velvet Matte Lipstick", brand: "Luxe Bloom", price: 850, stockCount: 120, category: "Makeup", isFeatured: false, image: "/p3.jpg" },
-      ]);
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("/api/seller/products");
+      const data = await res.json();
+      if (res.ok) setProducts(data);
+    } catch (error) {
+      console.error("Failed to fetch products", error);
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+    
+    try {
+      const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setProducts(products.filter(p => p._id !== id));
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to delete product");
+      }
+    } catch (error) {
+      alert("An error occurred while deleting the product");
+    }
+  };
 
   const filteredProducts = products.filter(p => 
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    p.category.toLowerCase().includes(searchTerm.toLowerCase())
+    p.category?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -56,7 +76,7 @@ export default function SellerProducts() {
             <p className="text-[#444] text-[10px] uppercase tracking-[0.3em] font-bold mt-1">Product Catalog Management</p>
           </div>
           <div className="flex gap-4">
-            <Link href="/seller/products/add" className="px-6 py-2.5 bg-[#d4af37] text-black text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all flex items-center gap-2">
+            <Link href="/seller/add-product" className="px-6 py-2.5 bg-[#d4af37] text-black text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all flex items-center gap-2">
               <Plus size={14} /> New Product
             </Link>
           </div>
@@ -129,15 +149,19 @@ export default function SellerProducts() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <button className="p-2 text-[#444] hover:text-[#d4af37] transition-colors" title="Edit">
+                          <Link href={`/seller/add-product?edit=${p._id}`} className="p-2 text-[#444] hover:text-[#d4af37] transition-colors" title="Edit">
                             <Edit size={16} />
-                          </button>
-                          <button className="p-2 text-[#444] hover:text-red-500 transition-colors" title="Delete">
+                          </Link>
+                          <button 
+                            onClick={() => handleDelete(p._id)}
+                            className="p-2 text-[#444] hover:text-red-500 transition-colors" 
+                            title="Delete"
+                          >
                             <Trash2 size={16} />
                           </button>
-                          <button className="p-2 text-[#444] hover:text-white transition-colors" title="View Storefront">
+                          <Link href={`/product/${p._id}`} target="_blank" className="p-2 text-[#444] hover:text-white transition-colors" title="View Storefront">
                             <ExternalLink size={16} />
-                          </button>
+                          </Link>
                         </div>
                       </td>
                     </tr>

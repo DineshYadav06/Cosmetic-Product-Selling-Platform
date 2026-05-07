@@ -6,10 +6,14 @@ import bcrypt from 'bcryptjs';
 export async function POST(request: Request) {
   try {
     await connectToDatabase();
-    const { name, email, password, phone, storeName } = await request.json();
+    const { 
+      name, email, password, phone, storeName,
+      businessType, gstNumber, panNumber, businessAddress,
+      bankAccountHolder, bankAccountNumber, ifscCode, bankName
+    } = await request.json();
 
     if (!name || !email || !password || !phone || !storeName) {
-      return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
+      return NextResponse.json({ error: 'Core fields are required' }, { status: 400 });
     }
 
     const existingUser = await User.findOne({ email });
@@ -38,7 +42,17 @@ export async function POST(request: Request) {
         plan: 'basic',
         isApproved: false,
         joinedAt: new Date(),
-        earnings: 0
+        earnings: 0,
+        businessType,
+        gstNumber,
+        panNumber,
+        businessAddress,
+        bankDetails: {
+          accountHolder: bankAccountHolder,
+          accountNumber: bankAccountNumber,
+          ifscCode,
+          bankName
+        }
       }
     });
 

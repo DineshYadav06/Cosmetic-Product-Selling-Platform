@@ -27,6 +27,10 @@ OUTPUT FORMAT: Return EXCLUSIVELY a JSON object with this structure:
   "diagnosis": "A 2-3 word clinical summary of their skin state",
   "aiNote": "A personalized 2-sentence note from the AI expert",
   "profile": { "skinType": "...", "sensitivity": "..." },
+  "schedule": {
+    "am": ["Cleanse", "Treat", "Protect"],
+    "pm": ["Double Cleanse", "Treat", "Moisturize"]
+  },
   "recommendations": [
     {
       "id": "product_id",

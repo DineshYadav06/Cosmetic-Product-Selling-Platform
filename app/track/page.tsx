@@ -12,8 +12,10 @@ import {
   MapPin, 
   Loader2,
   ChevronRight,
+  ChevronLeft,
   ShoppingBag
 } from "lucide-react";
+import Link from "next/link";
 
 export default function TrackOrder() {
   const [orderId, setOrderId] = useState("");
@@ -57,6 +59,12 @@ export default function TrackOrder() {
     <div className="min-h-screen bg-black text-white flex flex-col">
       <Header />
       
+      <div className="bg-[#0a0a0a] px-4 md:px-8 py-4 border-b border-[#1a1a1a]">
+        <Link href="/" className="inline-flex items-center gap-2 text-[#666] hover:text-[#d4af37] transition-colors text-[10px] font-bold uppercase tracking-[0.3em]">
+          <ChevronLeft size={14} /> Return to Shop
+        </Link>
+      </div>
+
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-20">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-serif font-bold tracking-tight mb-4">Track Your Shipment</h1>
