@@ -11,7 +11,11 @@ function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
   const [products, setProducts] = useState<any[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState("relevance");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     if (query) {
@@ -22,6 +26,7 @@ function SearchContent() {
           const data = await res.json();
           if (res.ok) {
             setProducts(data);
+            setFilteredProducts(data);
           }
         } catch (err) {
           console.error("Search error:", err);
@@ -34,6 +39,20 @@ function SearchContent() {
       setLoading(false);
     }
   }, [query]);
+
+  useEffect(() => {
+    let result = [...products];
+    
+    // Price Filter
+    result = result.filter(p => p.price >= priceRange[0] && p.price <= priceRange[1]);
+    
+    // Sort
+    if (sortBy === "price-low") result.sort((a, b) => a.price - b.price);
+    if (sortBy === "price-high") result.sort((a, b) => b.price - a.price);
+    if (sortBy === "rating") result.sort((a, b) => b.rating - a.rating);
+
+    setFilteredProducts(result);
+  }, [sortBy, priceRange, products]);
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
@@ -50,23 +69,72 @@ function SearchContent() {
               "{query}"
             </h1>
             <p className="text-[#666] text-sm mt-2 uppercase tracking-widest font-bold">
-              {loading ? "Searching..." : `${products.length} Items Found`}
+              {loading ? "Searching..." : `${filteredProducts.length} Items Found`}
             </p>
           </div>
           
-          <button className="flex items-center gap-2 border border-[#222] px-6 py-3 text-[10px] uppercase font-bold tracking-[0.2em] hover:border-[#d4af37] hover:text-[#d4af37] transition-all">
-            <SlidersHorizontal size={14} /> Filter & Sort
-          </button>
+          <div className="flex gap-4">
+             <select 
+               className="bg-black border border-[#222] px-4 py-3 text-[10px] uppercase font-bold tracking-[0.2em] outline-none hover:border-[#d4af37]"
+               value={sortBy}
+               onChange={(e) => setSortBy(e.target.value)}
+             >
+               <option value="relevance">Relevance</option>
+               <option value="price-low">Price: Low to High</option>
+               <option value="price-high">Price: High to Low</option>
+               <option value="rating">Top Rated</option>
+             </select>
+             
+             <button 
+               onClick={() => setShowFilters(!showFilters)}
+               className={`flex items-center gap-2 border px-6 py-3 text-[10px] uppercase font-bold tracking-[0.2em] transition-all
+                 ${showFilters ? 'bg-[#d4af37] text-black border-[#d4af37]' : 'border-[#222] text-white hover:border-[#d4af37]'}`}
+             >
+               <SlidersHorizontal size={14} /> {showFilters ? 'Hide Filters' : 'Filters'}
+             </button>
+          </div>
         </div>
+
+        {showFilters && (
+          <div className="mb-12 p-8 bg-[#0a0a0a] border border-[#1a1a1a] flex flex-wrap gap-12 animate-in slide-in-from-top duration-500">
+             <div>
+                <p className="text-[10px] uppercase tracking-widest font-bold text-[#d4af37] mb-6">Price Range (₹)</p>
+                <div className="flex items-center gap-4">
+                   <input 
+                     type="number" 
+                     className="bg-black border border-[#222] p-2 text-xs w-24 outline-none" 
+                     value={priceRange[0]}
+                     onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+                   />
+                   <span className="text-[#444]">—</span>
+                   <input 
+                     type="number" 
+                     className="bg-black border border-[#222] p-2 text-xs w-24 outline-none" 
+                     value={priceRange[1]}
+                     onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                   />
+                </div>
+             </div>
+             
+             <div className="flex-1 flex items-end justify-end">
+                <button 
+                  onClick={() => { setPriceRange([0, 10000]); setSortBy("relevance"); }}
+                  className="text-[9px] uppercase tracking-widest text-[#666] hover:text-white"
+                >
+                  Clear All Filters
+                </button>
+             </div>
+          </div>
+        )}
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-40">
             <Loader2 size={40} className="animate-spin text-[#d4af37] mb-4" />
             <p className="text-[#444] text-[10px] uppercase tracking-[0.3em] font-bold">Browsing the vault...</p>
           </div>
-        ) : products.length > 0 ? (
+        ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-16">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
           </div>

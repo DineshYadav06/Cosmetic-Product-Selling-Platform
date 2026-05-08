@@ -8,6 +8,27 @@ import { Star, Truck, ShieldCheck, Heart, ChevronLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import ProductActions from "../../../components/ProductActions";
 import ReviewSection from "../../../components/ReviewSection";
+import { Metadata } from "next";
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ id: string }> }
+): Promise<Metadata> {
+  const resolvedParams = await params;
+  if (!resolvedParams.id.match(/^[0-9a-fA-F]{24}$/)) return { title: "Product Not Found" };
+  
+  await connectToDatabase();
+  const product = await Product.findById(resolvedParams.id).lean();
+  
+  if (!product) return { title: "Product Not Found" };
+
+  return {
+    title: `${product.name} | ${product.brand}`,
+    description: product.description.slice(0, 160),
+    openGraph: {
+      images: [product.image],
+    },
+  };
+}
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await connectToDatabase();

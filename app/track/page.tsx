@@ -13,9 +13,11 @@ import {
   Loader2,
   ChevronRight,
   ChevronLeft,
-  ShoppingBag
+  ShoppingBag,
+  Shield
 } from "lucide-react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export default function TrackOrder() {
   const [orderId, setOrderId] = useState("");
@@ -98,7 +100,18 @@ export default function TrackOrder() {
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border-b border-[#111] pb-8 mb-8">
                 <div>
                   <p className="text-[10px] text-[#444] uppercase tracking-widest font-bold mb-1">Tracking ID</p>
-                  <h2 className="text-xl font-serif font-bold text-[#d4af37]">{order._id.toUpperCase()}</h2>
+                  <div className="flex items-center gap-4">
+                    <h2 className="text-xl font-serif font-bold text-[#d4af37]">{order._id.toUpperCase()}</h2>
+                    <button 
+                      onClick={() => {
+                        navigator.clipboard.writeText(order._id);
+                        alert("ID Copied to clipboard");
+                      }}
+                      className="text-[9px] uppercase tracking-widest text-[#666] hover:text-white border border-[#222] px-2 py-1 transition-all"
+                    >
+                      Copy
+                    </button>
+                  </div>
                 </div>
                 <div className="flex gap-10">
                   <div>
@@ -116,12 +129,23 @@ export default function TrackOrder() {
 
               {/* Timeline */}
               <div className="relative pt-8">
-                <div className="absolute top-[4.5rem] left-0 w-full h-[1px] bg-[#111] hidden md:block" />
+                {/* Horizontal Progress Bar Background */}
+                <div className="absolute top-[3.25rem] left-[12.5%] w-[75%] h-[2px] bg-[#111] hidden md:block" />
+                {/* Active Progress Bar */}
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ 
+                    width: order?.isDelivered ? "75%" : order?.isShipped ? "50%" : order?.isPaid ? "25%" : "0%" 
+                  }}
+                  transition={{ duration: 1.5, ease: "easeInOut" }}
+                  className="absolute top-[3.25rem] left-[12.5%] h-[2px] bg-[#d4af37] hidden md:block shadow-[0_0_10px_#d4af37]"
+                />
+
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                   {steps.map((step, i) => (
                     <div key={i} className="relative z-10 flex flex-col items-center text-center">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 transition-all duration-700 
-                        ${step.completed ? 'bg-[#d4af37] text-black' : 'bg-[#111] text-[#333] border border-[#1a1a1a]'}`}>
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 transition-all duration-1000 
+                        ${step.completed ? 'bg-[#d4af37] text-black shadow-[0_0_20px_rgba(212,175,55,0.4)] scale-110' : 'bg-[#111] text-[#333] border border-[#1a1a1a]'}`}>
                         <step.icon size={20} />
                       </div>
                       <h3 className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${step.completed ? 'text-white' : 'text-[#333]'}`}>{step.label}</h3>

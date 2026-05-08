@@ -25,13 +25,44 @@ export async function POST(request: Request) {
     }
 
     // 2. Parse Body Data
-    const { orderItems, shippingAddress, totalPrice } = await request.json();
+    const { orderItems, shippingAddress } = await request.json();
 
     if (!orderItems || orderItems.length === 0) {
       return NextResponse.json({ error: 'No order items' }, { status: 400 });
     }
 
-    // 3. Initialize Razorpay Server Instance
+    // 3. SECURE PRICE CALCULATION: Fetch actual prices from DB
+    const productIds = orderItems.map((item: any) => item.product);
+    const Product = (await import('../../../../lib/models/Product')).default;
+    const dbProducts = await Product.find({ _id: { $in: productIds } });
+
+    let dbTotal = 0;
+    const itemsWithActualPrices = [];
+
+    for (const item of orderItems) {
+      const dbProduct = dbProducts.find(p => p._id.toString() === item.product);
+      if (!dbProduct) {
+        return NextResponse.json({ error: `Product ${item.product} not found` }, { status: 404 });
+      }
+      
+      if (!dbProduct.inStock || dbProduct.stockCount < item.quantity) {
+        return NextResponse.json({ error: `${dbProduct.name} is out of stock` }, { status: 400 });
+      }
+
+      dbTotal += dbProduct.price * item.quantity;
+      itemsWithActualPrices.push({
+        product: dbProduct._id,
+        quantity: item.quantity,
+        price: dbProduct.price,
+        name: dbProduct.name
+      });
+    }
+
+    // Apply 18% tax as defined in frontend logic
+    const tax = Math.floor(dbTotal * 0.18);
+    const finalTotal = dbTotal + tax;
+
+    // 4. Initialize Razorpay Server Instance
     if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_SECRET) {
       throw new Error('Razorpay environmental variables missing.');
     }
@@ -41,19 +72,19 @@ export async function POST(request: Request) {
       key_secret: process.env.RAZORPAY_SECRET,
     });
 
-    // 4. Create internal tracking Order in MongoDB (Status: Pending)
+    // 5. Create internal tracking Order in MongoDB (Status: Pending)
     const newOrder = new Order({
       user: decoded.userId,
-      products: orderItems,
+      products: itemsWithActualPrices,
       shippingAddress,
-      totalPrice,
+      totalPrice: finalTotal,
       isPaid: false
     });
     const createdOrder = await newOrder.save();
 
-    // 5. Fire Razorpay Order Request
+    // 6. Fire Razorpay Order Request
     const options = {
-      amount: Math.round(totalPrice * 100), // convert to paisa
+      amount: Math.round(finalTotal * 100), // convert to paisa
       currency: "INR",
       receipt: createdOrder._id.toString(),
       payment_capture: 1

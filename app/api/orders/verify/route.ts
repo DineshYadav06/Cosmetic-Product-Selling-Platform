@@ -33,8 +33,24 @@ export async function POST(request: Request) {
           razorpay_signature,
         };
         await order.save();
+
+        // DECREMENT STOCK
+        const Product = (await import('../../../../lib/models/Product')).default;
+        for (const item of order.products) {
+          await Product.findByIdAndUpdate(item.product, {
+            $inc: { stockCount: -item.quantity }
+          });
+          
+          // Check if stock became zero and update inStock
+          const updatedProduct = await Product.findById(item.product);
+          if (updatedProduct && updatedProduct.stockCount <= 0) {
+            updatedProduct.inStock = false;
+            updatedProduct.stockCount = 0;
+            await updatedProduct.save();
+          }
+        }
         
-        return NextResponse.json({ message: 'Payment verified successfully!', order }, { status: 200 });
+        return NextResponse.json({ message: 'Payment verified successfully and inventory updated!', order }, { status: 200 });
       } else {
         return NextResponse.json({ error: 'Tracking Order not found in DB' }, { status: 404 });
       }
