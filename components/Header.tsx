@@ -189,16 +189,26 @@ export default function Header() {
               <div className="hidden md:flex items-center gap-4">
                 {user.role === 'admin' && (
                   <Link href="/admin" className="bg-red-900/20 border border-red-800 text-red-400 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest hover:bg-red-800 hover:text-white transition-all">
-                    Admin Panel
+                    Admin
                   </Link>
                 )}
                 {user.role === 'seller' && (
                   <Link href="/seller/dashboard" className="bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37] px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest hover:bg-[#d4af37] hover:text-black transition-all">
-                    Seller Dashboard
+                    Seller
                   </Link>
                 )}
-                <div className="bg-[#111] border border-[#222] text-[#d4af37] px-4 py-1.5 text-xs font-bold uppercase tracking-widest">
-                  Hi, {user.name.split(" ")[0]}
+                <div className="flex items-center gap-3 bg-[#111] border border-[#222] px-4 py-1.5 transition-all">
+                  <div className="flex flex-col items-start leading-none">
+                    <span className="text-[8px] text-gray-500 font-bold uppercase tracking-[0.2em] mb-1">Elite Status</span>
+                    <span className={`text-[11px] font-bold uppercase tracking-widest ${user.glowPass?.isActive ? 'text-[#d4af37]' : 'text-white'}`}>
+                      {user.name.split(" ")[0]} {user.glowPass?.isActive && "✦"}
+                    </span>
+                  </div>
+                  {user.glowPass?.isActive && (
+                    <div className="bg-[#d4af37] text-black text-[7px] font-bold px-1.5 py-0.5 rounded animate-pulse">
+                      GLOWPASS
+                    </div>
+                  )}
                 </div>
               </div>
             )}

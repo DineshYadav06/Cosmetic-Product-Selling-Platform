@@ -72,16 +72,74 @@ export default function AccountPage() {
                   <p className="text-sm text-gray-500">Track, return, or buy things again</p>
                </div>
                
-               <div className="bg-white p-6 border border-gray-200 shadow-sm hover:border-[#d4af37] transition-colors cursor-pointer group">
+                <div className="bg-white p-6 border border-gray-200 shadow-sm hover:border-[#d4af37] transition-colors cursor-pointer group">
                   <div className="bg-gray-100 w-12 h-12 rounded-full flex items-center justify-center text-gray-800 mb-4 group-hover:bg-[#d4af37] group-hover:text-white transition-colors">
                      <MapPin size={20} />
                   </div>
                   <h3 className="font-bold text-xl mb-1">Addresses</h3>
                   <p className="text-sm text-gray-500">Edit addresses for orders</p>
-               </div>
+                </div>
 
-               {user.role !== 'seller' && (
-                 <Link href="/seller/register" className="bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a] p-6 border border-[#d4af37]/30 shadow-lg hover:border-[#d4af37] transition-all cursor-pointer group col-span-1 sm:col-span-2 relative overflow-hidden">
+                {/* GlowPass Premium Section */}
+                <div className={`col-span-1 sm:col-span-2 p-8 border-2 relative overflow-hidden transition-all
+                  ${user.glowPass?.isActive 
+                    ? 'bg-gradient-to-br from-[#000] to-[#111] border-[#d4af37]' 
+                    : 'bg-white border-dashed border-gray-300 hover:border-[#d4af37]'}`}>
+                    
+                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                       <div>
+                          <div className="flex items-center gap-2 mb-2">
+                             <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest
+                                ${user.glowPass?.isActive ? 'bg-[#d4af37] text-black' : 'bg-gray-100 text-gray-400'}`}>
+                                {user.glowPass?.isActive ? `GlowPass ${user.glowPass.tier}` : 'Not Active'}
+                             </div>
+                             {user.glowPass?.isActive && (
+                               <span className="text-[#d4af37] animate-pulse">✦</span>
+                             )}
+                          </div>
+                          <h3 className={`text-2xl font-serif font-bold mb-2 ${user.glowPass?.isActive ? 'text-white' : 'text-gray-900'}`}>
+                             {user.glowPass?.isActive ? 'Elite Membership Active' : 'Upgrade to GlowPass Premium'}
+                          </h3>
+                          <p className={`text-sm max-w-md ${user.glowPass?.isActive ? 'text-gray-400' : 'text-gray-500'}`}>
+                             {user.glowPass?.isActive 
+                               ? `Your benefits are active until ${new Date(user.glowPass.expiresAt).toLocaleDateString()}. Enjoy free express shipping and early access to drops.`
+                               : 'Get free shipping, exclusive niche fragrance samples, and early access to new arrivals with our elite membership.'}
+                          </p>
+                       </div>
+                       
+                       {!user.glowPass?.isActive ? (
+                         <button 
+                           onClick={async () => {
+                             const res = await fetch('/api/user/glowpass', {
+                               method: 'POST',
+                               headers: { 
+                                 'Content-Type': 'application/json',
+                                 'Authorization': `Bearer ${localStorage.getItem('token')}`
+                               },
+                               body: JSON.stringify({ tier: 'platinum' })
+                             });
+                             if(res.ok) window.location.reload();
+                           }}
+                           className="bg-[#d4af37] text-black px-8 py-3 text-xs font-bold uppercase tracking-[0.2em] hover:bg-white transition-all shadow-[0_0_20px_rgba(212,175,55,0.3)]"
+                         >
+                           Join Now — ₹499/yr
+                         </button>
+                       ) : (
+                         <div className="text-right">
+                            <span className="block text-[10px] text-[#d4af37] font-bold uppercase tracking-[0.2em] mb-1">Status</span>
+                            <span className="text-white font-bold text-lg">VIP GOLD</span>
+                         </div>
+                       )}
+                    </div>
+                    
+                    {/* Background Graphic */}
+                    <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                       <Store size={150} className={user.glowPass?.isActive ? "text-[#d4af37]" : "text-gray-200"} />
+                    </div>
+                </div>
+
+                {user.role !== 'seller' && (
+                  <Link href="/seller/register" className="bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a] p-6 border border-[#d4af37]/30 shadow-lg hover:border-[#d4af37] transition-all cursor-pointer group col-span-1 sm:col-span-2 relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                       <Store size={80} className="text-[#d4af37]" />
                     </div>

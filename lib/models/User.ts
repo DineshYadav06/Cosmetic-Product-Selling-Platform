@@ -37,6 +37,11 @@ export interface IUser extends Document {
     product: mongoose.Types.ObjectId;
     quantity: number;
   }[];
+  glowPass?: {
+    isActive: boolean;
+    expiresAt: Date;
+    tier: 'silver' | 'gold' | 'platinum';
+  };
 }
 
 const UserSchema: Schema = new Schema({
@@ -54,6 +59,11 @@ const UserSchema: Schema = new Schema({
   landmark: { type: String },
   location: { type: String },
   role: { type: String, enum: ['user', 'admin', 'seller'], default: 'user' },
+  glowPass: {
+    isActive: { type: Boolean, default: false },
+    expiresAt: { type: Date },
+    tier: { type: String, enum: ['silver', 'gold', 'platinum'], default: 'silver' }
+  },
   sellerDetails: {
     storeName: { type: String },
     phone: { type: String },
