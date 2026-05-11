@@ -4,11 +4,13 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Link from "next/link";
 import Image from "next/image";
-import { Trash2, ShoppingBag } from "lucide-react";
+import { Trash2, ShoppingBag, ChevronLeft } from "lucide-react";
 import { useStore } from "../../lib/context/StoreContext";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function CartPage() {
+  const router = useRouter();
   const { cart, removeFromCart, updateQuantity, cartTotal, cartCount } = useStore();
   const [mounted, setMounted] = useState(false);
 
@@ -22,7 +24,17 @@ export default function CartPage() {
     <main className="min-h-screen bg-black text-white selection:bg-[#d4af37] selection:text-black flex flex-col">
       <Header />
       
-      <div className="max-w-[1920px] mx-auto w-full px-4 md:px-8 py-10 flex-1">
+      <div className="max-w-[1920px] mx-auto w-full px-4 md:px-8 py-6 flex-1">
+        {/* Navigation */}
+        <div className="mb-8">
+          <button 
+            onClick={() => router.back()}
+            className="flex items-center gap-2 text-[#555] hover:text-[#d4af37] transition-colors group"
+          >
+            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="text-[10px] uppercase font-bold tracking-[0.3em]">Continue Shopping</span>
+          </button>
+        </div>
         <h1 className="text-3xl font-serif font-bold tracking-widest uppercase mb-10 text-center border-b border-[#222] pb-6">
           Your Luxury Bag <span className="text-sm font-sans tracking-widest text-[#666] ml-2">({cartCount} items)</span>
         </h1>

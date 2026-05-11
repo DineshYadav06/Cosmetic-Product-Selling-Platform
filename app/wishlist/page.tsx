@@ -1,7 +1,8 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Link from "next/link";
-import { Heart, ShoppingBag, Trash2, Star } from "lucide-react";
+import { Heart, ShoppingBag, Trash2, Star, ChevronLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const WISHLIST_ITEMS = [
   {
@@ -55,13 +56,24 @@ const WISHLIST_ITEMS = [
 ];
 
 export default function WishlistPage() {
+  const router = useRouter();
   const savings = WISHLIST_ITEMS.reduce((acc, item) => acc + (item.originalPrice - item.price), 0);
 
   return (
     <main className="min-h-screen bg-black text-white selection:bg-[#d4af37] selection:text-black flex flex-col">
       <Header />
 
-      <div className="max-w-[1920px] mx-auto w-full px-4 md:px-8 py-10 flex-1">
+      <div className="max-w-[1920px] mx-auto w-full px-4 md:px-8 py-6 flex-1">
+        {/* Navigation / Breadcrumb */}
+        <div className="mb-6">
+          <button 
+            onClick={() => router.back()}
+            className="flex items-center gap-2 text-[#555] hover:text-[#d4af37] transition-colors group"
+          >
+            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="text-[10px] uppercase font-bold tracking-[0.3em]">Back</span>
+          </button>
+        </div>
         {/* Title */}
         <div className="flex items-center justify-between mb-10 border-b border-[#222] pb-6">
           <div className="flex items-center gap-4">

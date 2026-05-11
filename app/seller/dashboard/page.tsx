@@ -58,6 +58,13 @@ export default function SellerDashboard() {
         {/* Top Header */}
         <div className="bg-[#0a0a0a] border-b border-[#1a1a1a] px-8 py-6 flex items-center justify-between">
           <div className="flex items-center gap-8">
+            <Link 
+              href="/" 
+              className="w-10 h-10 border border-[#222] flex items-center justify-center text-[#555] hover:text-[#d4af37] hover:border-[#d4af37] transition-all rounded-sm"
+              title="Back to Store"
+            >
+              <ChevronLeft size={20} />
+            </Link>
             <div>
               <h1 className="text-2xl font-serif font-bold tracking-widest uppercase">Commerce Overview</h1>
               <p className="text-[#444] text-[10px] uppercase tracking-[0.3em] font-bold mt-1">Management Suite v2.0</p>

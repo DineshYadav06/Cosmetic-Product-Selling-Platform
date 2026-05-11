@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useStore } from "../../lib/context/StoreContext";
 import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -1193,14 +1194,21 @@ export default function AuthPage() {
 
       {/* Top Nav */}
       <nav className="gm-nav">
-        <Link href="/" className="gm-nav-logo">
-          <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
-            <circle cx="18" cy="18" r="18" fill="rgba(255,255,255,0.25)" />
-            <path d="M9 18 Q18 8 27 18 Q18 28 9 18Z" fill="white" />
-          </svg>
-          GLOWMART
-          <span className="gm-nav-tagline">India&apos;s Premium Beauty Store</span>
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center gap-2 text-white/60 hover:text-white transition-colors group">
+            <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="text-[10px] uppercase font-bold tracking-[0.2em]">Home</span>
+          </Link>
+          <div className="w-[1px] h-4 bg-white/20" />
+          <Link href="/" className="gm-nav-logo">
+            <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+              <circle cx="18" cy="18" r="18" fill="rgba(255,255,255,0.25)" />
+              <path d="M9 18 Q18 8 27 18 Q18 28 9 18Z" fill="white" />
+            </svg>
+            GLOWMART
+            <span className="gm-nav-tagline">India&apos;s Premium Beauty Store</span>
+          </Link>
+        </div>
         <div className="gm-nav-actions">
           <Link href="/collection" className="gm-nav-link">Shop</Link>
           <Link href="/about" className="gm-nav-link">About</Link>

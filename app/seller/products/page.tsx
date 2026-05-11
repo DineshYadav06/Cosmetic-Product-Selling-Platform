@@ -71,9 +71,18 @@ export default function SellerProducts() {
 
         {/* Header */}
         <div className="bg-[#0a0a0a] border-b border-[#1a1a1a] px-8 py-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-serif font-bold tracking-widest uppercase">My Inventory</h1>
-            <p className="text-[#444] text-[10px] uppercase tracking-[0.3em] font-bold mt-1">Product Catalog Management</p>
+          <div className="flex items-center gap-6">
+            <Link 
+              href="/seller/dashboard" 
+              className="w-10 h-10 border border-[#222] flex items-center justify-center text-[#555] hover:text-[#d4af37] hover:border-[#d4af37] transition-all rounded-sm"
+              title="Back to Dashboard"
+            >
+              <ChevronLeft size={20} />
+            </Link>
+            <div>
+              <h1 className="text-2xl font-serif font-bold tracking-widest uppercase">My Inventory</h1>
+              <p className="text-[#444] text-[10px] uppercase tracking-[0.3em] font-bold mt-1">Product Catalog Management</p>
+            </div>
           </div>
           <div className="flex gap-4">
             <Link href="/seller/add-product" className="px-6 py-2.5 bg-[#d4af37] text-black text-[10px] font-bold uppercase tracking-widest hover:bg-white transition-all flex items-center gap-2">

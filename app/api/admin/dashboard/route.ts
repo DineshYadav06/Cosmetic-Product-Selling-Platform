@@ -1,11 +1,12 @@
-import { NextResponse } from 'next/server';
-import connectToDatabase from '../../../../lib/mongodb';
-import Product from '../../../../lib/models/Product';
-import Order from '../../../../lib/models/Order';
-import User from '../../../../lib/models/User';
+import { verifyAuth, hasRole } from '../../../../lib/utils/auth';
 
 export async function GET() {
   try {
+    const user = await verifyAuth();
+    if (!user || !hasRole(user, ['admin'])) {
+      return NextResponse.json({ error: 'Unauthorized: Admin access only' }, { status: 403 });
+    }
+
     await connectToDatabase();
     
     const productCount = await Product.countDocuments();

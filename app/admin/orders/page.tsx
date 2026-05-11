@@ -66,11 +66,20 @@ export default function AdminOrdersPage() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
         <div className="bg-[#0a0a0a] border-b border-[#1a1a1a] px-8 py-5 flex items-center justify-between flex-shrink-0">
-          <div>
-            <h1 className="text-2xl font-serif font-bold tracking-widest uppercase">Order Fulfillment</h1>
-            <p className="text-[#555] text-[10px] uppercase tracking-[0.3em] font-bold mt-1">
-              {filteredOrders.length} active orders requiring attention
-            </p>
+          <div className="flex items-center gap-6">
+            <Link 
+              href="/admin" 
+              className="w-10 h-10 border border-[#222] flex items-center justify-center text-[#555] hover:text-[#d4af37] hover:border-[#d4af37] transition-all rounded-sm"
+              title="Back to Dashboard"
+            >
+              <ChevronLeft size={20} />
+            </Link>
+            <div>
+              <h1 className="text-2xl font-serif font-bold tracking-widest uppercase">Order Fulfillment</h1>
+              <p className="text-[#555] text-[10px] uppercase tracking-[0.3em] font-bold mt-1">
+                {filteredOrders.length} active orders requiring attention
+              </p>
+            </div>
           </div>
         </div>
 

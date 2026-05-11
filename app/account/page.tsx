@@ -4,12 +4,14 @@ import { useStore } from "../../lib/context/StoreContext";
 import AuthPage from "../auth/page";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { Package, Heart, MapPin, LogOut, Store, ArrowRight } from "lucide-react";
+import { Package, Heart, MapPin, LogOut, Store, ArrowRight, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AccountPage() {
   const { user, logout } = useStore();
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -37,7 +39,18 @@ export default function AccountPage() {
     <main className="min-h-screen bg-gray-50">
       <Header />
       
-      <div className="max-w-6xl mx-auto px-4 py-12 md:py-16">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Navigation */}
+        <div className="mb-8">
+          <button 
+            onClick={() => router.push('/')}
+            className="flex items-center gap-2 text-gray-400 hover:text-black transition-colors group"
+          >
+            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="text-[10px] uppercase font-bold tracking-[0.3em]">Back to Store</span>
+          </button>
+        </div>
+
         <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-200">
           <div>
             <h1 className="text-3xl font-serif font-bold text-gray-900 tracking-wider">My Account</h1>
@@ -64,21 +77,21 @@ export default function AccountPage() {
 
           <div className="col-span-1 md:col-span-2 flex flex-col gap-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-               <div className="bg-white p-6 border border-gray-200 shadow-sm hover:border-[#d4af37] transition-colors cursor-pointer group">
+               <Link href="/orders" className="bg-white p-6 border border-gray-200 shadow-sm hover:border-[#d4af37] transition-colors cursor-pointer group">
                   <div className="bg-gray-100 w-12 h-12 rounded-full flex items-center justify-center text-gray-800 mb-4 group-hover:bg-[#d4af37] group-hover:text-white transition-colors">
                      <Package size={20} />
                   </div>
                   <h3 className="font-bold text-xl mb-1">Orders</h3>
                   <p className="text-sm text-gray-500">Track, return, or buy things again</p>
-               </div>
+               </Link>
                
-                <div className="bg-white p-6 border border-gray-200 shadow-sm hover:border-[#d4af37] transition-colors cursor-pointer group">
+               <Link href="/addresses" className="bg-white p-6 border border-gray-200 shadow-sm hover:border-[#d4af37] transition-colors cursor-pointer group">
                   <div className="bg-gray-100 w-12 h-12 rounded-full flex items-center justify-center text-gray-800 mb-4 group-hover:bg-[#d4af37] group-hover:text-white transition-colors">
                      <MapPin size={20} />
                   </div>
                   <h3 className="font-bold text-xl mb-1">Addresses</h3>
                   <p className="text-sm text-gray-500">Edit addresses for orders</p>
-                </div>
+               </Link>
 
                 {/* GlowPass Premium Section */}
                 <div className={`col-span-1 sm:col-span-2 p-8 border-2 relative overflow-hidden transition-all
@@ -114,7 +127,7 @@ export default function AccountPage() {
                                method: 'POST',
                                headers: { 
                                  'Content-Type': 'application/json',
-                                 'Authorization': `Bearer ${localStorage.getItem('token')}`
+                                 'Authorization': `Bearer ${user.token}`
                                },
                                body: JSON.stringify({ tier: 'platinum' })
                              });

@@ -21,7 +21,10 @@ export default function ReviewSection({ productId, existingReviews = [] }: { pro
     try {
       const res = await fetch(`/api/products/${productId}/reviews`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${user.token}`
+        },
         body: JSON.stringify({ rating, comment })
       });
       const data = await res.json();

@@ -25,6 +25,10 @@ export async function POST(request: Request) {
       // Find tracking order and mark as successfully paid
       const order = await Order.findById(order_id);
       if (order) {
+        if (order.isPaid) {
+          return NextResponse.json({ message: 'Order already processed', order }, { status: 200 });
+        }
+        
         order.isPaid = true;
         order.paidAt = new Date();
         order.paymentResult = {

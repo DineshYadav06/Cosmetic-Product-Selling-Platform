@@ -111,9 +111,18 @@ function SellerAddProductForm() {
   return (
     <div className="flex-1 flex flex-col overflow-auto relative">
       <div className="bg-[#0a0a0a] border-b border-[#1a1a1a] px-8 py-6 flex items-center justify-between sticky top-0 z-20">
-        <div>
-          <h1 className="text-2xl font-serif font-bold tracking-widest uppercase">{isEditing ? "Update Masterpiece" : "New Creation"}</h1>
-          <p className="text-[#444] text-[9px] uppercase tracking-[0.4em] font-bold mt-1">Marketplace Artisan Portal</p>
+        <div className="flex items-center gap-6">
+          <Link 
+            href="/seller/products" 
+            className="w-10 h-10 border border-[#222] flex items-center justify-center text-[#555] hover:text-[#d4af37] hover:border-[#d4af37] transition-all rounded-sm"
+            title="Back to Products"
+          >
+            <ChevronLeft size={20} />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-serif font-bold tracking-widest uppercase">{isEditing ? "Update Masterpiece" : "New Creation"}</h1>
+            <p className="text-[#444] text-[9px] uppercase tracking-[0.4em] font-bold mt-1">Marketplace Artisan Portal</p>
+          </div>
         </div>
         {user?.sellerDetails?.plan === 'premium' && (
           <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full">

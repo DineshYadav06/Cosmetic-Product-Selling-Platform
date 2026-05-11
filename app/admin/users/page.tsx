@@ -76,9 +76,18 @@ export default function AdminUsers() {
         )}
 
         <div className="bg-[#0a0a0a] border-b border-[#1a1a1a] px-8 py-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-serif font-bold tracking-widest uppercase">User Directory</h1>
-            <p className="text-[#444] text-[10px] uppercase tracking-[0.3em] font-bold mt-1">Customers & Partners Management</p>
+          <div className="flex items-center gap-6">
+            <Link 
+              href="/admin" 
+              className="w-10 h-10 border border-[#222] flex items-center justify-center text-[#555] hover:text-[#d4af37] hover:border-[#d4af37] transition-all rounded-sm"
+              title="Back to Dashboard"
+            >
+              <ChevronLeft size={20} />
+            </Link>
+            <div>
+              <h1 className="text-2xl font-serif font-bold tracking-widest uppercase">User Directory</h1>
+              <p className="text-[#444] text-[10px] uppercase tracking-[0.3em] font-bold mt-1">Customers & Partners Management</p>
+            </div>
           </div>
           <div className="flex gap-4">
              <div className="bg-[#111] px-4 py-2 border border-[#1a1a1a] flex items-center gap-2">

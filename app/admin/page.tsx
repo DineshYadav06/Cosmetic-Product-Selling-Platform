@@ -2,12 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useStore } from "../../lib/context/StoreContext";
 import {
   Package, ShoppingBag, IndianRupee, Users, ArrowUpRight, Loader2, BarChart3, TrendingUp
 } from "lucide-react";
 import AdminSidebar from "../../components/admin/Sidebar";
 
 export default function AdminDashboard() {
+  const router = useRouter();
+  const { user } = useStore();
   const [data, setData] = useState({
     stats: { totalProducts: 0, totalOrders: 0, totalRevenue: 0, activeCustomers: 0 },
     recentOrders: [] as any[],
@@ -18,14 +22,23 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/admin/dashboard')
+    if (!user || user.role !== 'admin') {
+      router.push("/auth");
+      return;
+    }
+
+    fetch('/api/admin/dashboard', {
+      headers: {
+        'Authorization': `Bearer ${user.token}`
+      }
+    })
       .then(res => res.json())
       .then(val => {
         setData(val);
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [user, router]);
 
   const stats = [
     { label: "Total Products", value: data.stats.totalProducts, icon: Package, color: "#d4af37", bg: "rgba(212,175,55,0.08)", change: "Live data" },

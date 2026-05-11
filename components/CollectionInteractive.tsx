@@ -47,11 +47,19 @@ export default function CollectionInteractive({ products }: { products: Product[
 
   return (
     <div className="max-w-[1920px] mx-auto px-4 md:px-8 py-6">
-      <p className="hidden md:block text-xs uppercase tracking-widest text-[#888] mb-8 font-bold">
-        <span className="hover:text-white cursor-pointer transition-colors">Home</span> / 
-        <span className="hover:text-white cursor-pointer transition-colors ml-2">Beauty</span> / 
-        <span className="text-[#d4af37] ml-2">All Products</span>
-      </p>
+      <div className="flex items-center gap-4 mb-8">
+        <Link 
+          href="/" 
+          className="md:hidden w-8 h-8 border border-[#222] flex items-center justify-center text-[#555] hover:text-[#d4af37] transition-all"
+        >
+          <ChevronLeft size={16} />
+        </Link>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-[#666] font-bold">
+          <Link href="/" className="hover:text-[#d4af37] transition-colors">Home</Link> / 
+          <span className="ml-2">Collection</span> / 
+          <span className="text-[#d4af37] ml-2 font-black">All Products</span>
+        </p>
+      </div>
 
       {/* Mobile Top Category Scroller - Amazon Style */}
       <div className="md:hidden flex gap-3 overflow-x-auto pb-4 mb-4 custom-scrollbar whitespace-nowrap">

@@ -1,9 +1,11 @@
-import { NextResponse } from 'next/server';
-import connectToDatabase from '../../../../lib/mongodb';
-import User from '../../../../lib/models/User';
+import { verifyAuth, hasRole } from '../../../../lib/utils/auth';
 
 export async function GET() {
   try {
+    const user = await verifyAuth();
+    if (!user || !hasRole(user, ['admin'])) {
+      return NextResponse.json({ error: 'Unauthorized: Admin access only' }, { status: 403 });
+    }
     await connectToDatabase();
     
     // Fetch all users sorted by latest
@@ -21,6 +23,10 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   try {
+    const user = await verifyAuth();
+    if (!user || !hasRole(user, ['admin'])) {
+      return NextResponse.json({ error: 'Unauthorized: Admin access only' }, { status: 403 });
+    }
     await connectToDatabase();
     const { userId, role, isApproved } = await request.json();
     

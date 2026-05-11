@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, LayoutDashboard, Package, ClipboardList, ShoppingBag, Settings, Image as ImageIcon, CheckCircle2 } from "lucide-react";
 import AdminSidebar from "../../../components/admin/Sidebar";
+import { useStore } from "../../../lib/context/StoreContext";
 
 const CATEGORIES = ["Bestsellers", "Just Dropped", "Makeup", "Skincare", "Fragrance", "Haircare", "Gift Sets"];
 const SKIN_TYPES = ["Oily", "Dry", "Combination", "Sensitive", "Normal", "Mature"];
@@ -12,7 +13,15 @@ const SKIN_CONCERNS = ["Acne", "Aging", "Dark Spots", "Dryness", "Dullness", "La
 
 function AddProductForm() {
   const router = useRouter();
+  const { user } = useStore();
   const searchParams = useSearchParams();
+  
+  useEffect(() => {
+    if (!user || user.role !== 'admin') {
+      router.push("/auth");
+    }
+  }, [user, router]);
+  
   const editId = searchParams.get("edit");
   const isEditing = !!editId;
 
@@ -30,7 +39,11 @@ function AddProductForm() {
     if (isEditing && editId) {
       const fetchProduct = async () => {
         try {
-          const res = await fetch(`/api/products/${editId}`);
+          const res = await fetch(`/api/products/${editId}`, {
+            headers: {
+              'Authorization': `Bearer ${user?.token}`
+            }
+          });
           if (res.ok) {
             const data = await res.json();
             setForm({
@@ -87,7 +100,8 @@ function AddProductForm() {
       const res = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user?.token}`
         },
         body: JSON.stringify(payload)
       });
@@ -119,11 +133,20 @@ function AddProductForm() {
     <div className="flex-1 flex flex-col overflow-auto relative">
       {/* Top Bar */}
       <div className="bg-[#0a0a0a] border-b border-[#1a1a1a] px-8 py-5 flex items-center justify-between sticky top-0 z-10">
-        <div>
-          <h1 className="text-2xl font-serif font-bold tracking-widest uppercase">{isEditing ? "Edit Product" : "Add New Product"}</h1>
-          <p className="text-[#555] text-[10px] uppercase tracking-[0.3em] font-bold mt-1">
-            {isEditing ? "Update existing product details" : "Add a new item to the store catalog"}
-          </p>
+        <div className="flex items-center gap-6">
+          <Link 
+            href="/admin/products" 
+            className="w-10 h-10 border border-[#222] flex items-center justify-center text-[#555] hover:text-[#d4af37] hover:border-[#d4af37] transition-all rounded-sm"
+            title="Back to products"
+          >
+            <ChevronLeft size={20} />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-serif font-bold tracking-widest uppercase">{isEditing ? "Edit Product" : "Add New Product"}</h1>
+            <p className="text-[#555] text-[10px] uppercase tracking-[0.3em] font-bold mt-1">
+              {isEditing ? "Update existing product details" : "Add a new item to the store catalog"}
+            </p>
+          </div>
         </div>
       </div>
 

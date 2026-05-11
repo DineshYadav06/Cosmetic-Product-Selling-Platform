@@ -52,17 +52,29 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     seller = await User.findById(product.sellerId).select('name sellerDetails').lean();
   }
 
+  // Fetch related products for "Frequently Bought Together"
+  const relatedProducts = await Product.find({ 
+    _id: { $ne: resolvedParams.id },
+    inStock: true 
+  }).limit(2).lean();
+
   return (
     <main className="min-h-screen bg-black text-white selection:bg-[#d4af37] selection:text-black">
       <Header />
       
       <div className="max-w-[1920px] mx-auto px-4 md:px-8 py-6">
-        <Link 
-          href="/" 
+        <button 
+          onClick={() => {
+            if (window.history.length > 1) {
+              router.back();
+            } else {
+              router.push("/collection");
+            }
+          }}
           className="inline-flex items-center gap-2 text-[#666] hover:text-[#d4af37] transition-colors text-[10px] font-bold uppercase tracking-[0.3em] mb-4"
         >
           <ChevronLeft size={14} /> Back to Collection
-        </Link>
+        </button>
         <div className="flex flex-col md:flex-row gap-12 lg:gap-20">
           {/* Left Column - Product Image */}
           <div className="w-full md:w-1/2 flex justify-center sticky top-28 h-fit">
@@ -182,21 +194,23 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                <div className="w-32 h-40 bg-[#0a0a0a] border border-[#d4af37] p-4 flex items-center shadow-[0_0_15px_rgba(212,175,55,0.15)] relative">
                  <Image src={product.image} alt="This item" fill className="object-contain p-4" />
                </div>
-               <span className="text-3xl font-light text-[#444]">+</span>
-               <div className="w-32 h-40 bg-[#0a0a0a] border border-[#222] p-4 flex items-center relative opacity-70 hover:opacity-100 transition-opacity">
-                 <Image src="https://images.unsplash.com/photo-1596704017234-0b761be5b269?auto=format&fit=crop&q=80&w=200" alt="Pair item" fill className="object-contain p-4" />
-               </div>
-               <span className="text-3xl font-light text-[#444]">+</span>
-               <div className="w-32 h-40 bg-[#0a0a0a] border border-[#222] p-4 flex items-center relative opacity-70 hover:opacity-100 transition-opacity">
-                 <Image src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=200" alt="Pair item 2" fill className="object-contain p-4" />
-               </div>
+               {relatedProducts.map((rp: any) => (
+                 <div key={rp._id.toString()} className="flex items-center gap-6">
+                   <span className="text-3xl font-light text-[#444]">+</span>
+                   <div className="w-32 h-40 bg-[#0a0a0a] border border-[#222] p-4 flex items-center relative opacity-70 hover:opacity-100 transition-opacity">
+                     <Image src={rp.image} alt={rp.name} fill className="object-contain p-4" />
+                   </div>
+                 </div>
+               ))}
              </div>
 
              <div className="bg-[#111] border border-[#222] p-8 md:ml-12 min-w-[300px]">
                 <p className="text-[#888] text-xs uppercase tracking-widest font-bold mb-2">Total price:</p>
-                <p className="text-3xl font-serif text-[#d4af37] mb-6">₹{(product.price + 2900 + 650).toLocaleString('en-IN')}</p>
+                <p className="text-3xl font-serif text-[#d4af37] mb-6">
+                  ₹{(product.price + relatedProducts.reduce((acc, p) => acc + p.price, 0)).toLocaleString('en-IN')}
+                </p>
                 <button className="w-full bg-[#d4af37] text-black py-4 uppercase font-bold tracking-[0.2em] text-[10px] hover:bg-white shadow-[0_0_15px_rgba(212,175,55,0.2)]">
-                  Add all 3 to Bag
+                  Add Bundle to Bag
                 </button>
              </div>
           </div>
