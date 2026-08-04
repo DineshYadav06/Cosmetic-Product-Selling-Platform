@@ -1,5 +1,7 @@
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
+"use client";
+
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import Link from "next/link";
 import { Heart, ShoppingBag, Trash2, Star, ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Check, ArrowRight, Star, Shield, Zap, Sparkles } from "lucide-react";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import Link from "next/link";
 
 export default function SellerPricing() {

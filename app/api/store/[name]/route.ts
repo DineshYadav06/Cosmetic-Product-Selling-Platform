@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '../../../lib/mongodb';
-import User from '../../../lib/models/User';
-import Product from '../../../lib/models/Product';
+import connectToDatabase from '@/lib/mongodb';
+import User from '@/lib/models/User';
+import Product from '@/lib/models/Product';
 
 export async function GET(
   request: Request,
-  { params }: { params: { name: string } }
+  { params }: { params: Promise<{ name: string }> }
 ) {
   try {
     await connectToDatabase();
-    const storeName = decodeURIComponent(params.name);
+    const { name } = await params;
+    const storeName = decodeURIComponent(name);
     
     const seller = await User.findOne({ 'sellerDetails.storeName': storeName }).select('-passwordHash').lean();
     

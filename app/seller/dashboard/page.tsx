@@ -11,10 +11,11 @@ import {
   Loader2,
   Clock,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  ChevronLeft
 } from "lucide-react";
 import Link from "next/link";
-import AnalyticsChart from "../../../components/seller/AnalyticsChart";
+import AnalyticsChart from "@/components/seller/AnalyticsChart";
 
 export default function SellerDashboard() {
   const [data, setData] = useState<any>(null);

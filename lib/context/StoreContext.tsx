@@ -15,10 +15,17 @@ type CartItem = {
 
 type UserState = {
   id?: string;
+  _id?: string;
   name: string;
   email: string;
-  role: 'user' | 'admin' | 'seller';
+  role?: 'user' | 'admin' | 'seller';
   token: string | null;
+  glowPass?: {
+    isActive?: boolean;
+    tier?: string;
+    expiresAt?: string;
+  };
+  sellerDetails?: any;
 } | null;
 
 interface StoreContextType {
@@ -39,6 +46,7 @@ interface StoreContextType {
 
   // Auth
   user: UserState;
+  token: string | null;
   login: (userData: UserState) => void;
   logout: () => void;
   
@@ -175,7 +183,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       value={{
         cart, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal, cartCount, addManyToCart,
         wishlist, toggleWishlist, isInWishlist,
-        user, login, logout,
+        user, token: user?.token || null, login, logout,
         cartOpen, setCartOpen
       }}
     >

@@ -1,8 +1,8 @@
 "use client";
 
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
-import { useStore } from "../../lib/context/StoreContext";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { useStore } from "@/lib/context/StoreContext";
 import { useEffect, useState } from "react";
 import { Package, ChevronRight, ChevronLeft, Loader2, Calendar, ShoppingBag } from "lucide-react";
 import Link from "next/link";

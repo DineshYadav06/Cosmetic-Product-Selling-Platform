@@ -2,16 +2,18 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { 
   ShoppingBag, 
   Image as ImageIcon, 
   CheckCircle2, 
   Loader2,
   AlertTriangle,
-  Sparkles
+  Sparkles,
+  ChevronLeft
 } from "lucide-react";
-import SellerSidebar from "../../../components/seller/Sidebar";
-import { useStore } from "../../../lib/context/StoreContext";
+import SellerSidebar from "@/components/seller/Sidebar";
+import { useStore } from "@/lib/context/StoreContext";
 
 const CATEGORIES = ["Bestsellers", "Just Dropped", "Makeup", "Skincare", "Fragrance", "Haircare", "Gift Sets"];
 const SKIN_TYPES = ["Oily", "Dry", "Combination", "Sensitive", "Normal", "Mature"];

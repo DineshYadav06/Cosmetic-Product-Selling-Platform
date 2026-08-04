@@ -1,13 +1,13 @@
-import Header from "../../../components/Header";
-import Footer from "../../../components/Footer";
-import Product from "../../../lib/models/Product";
-import connectToDatabase from "../../../lib/mongodb";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import Product from "@/lib/models/Product";
+import connectToDatabase from "@/lib/mongodb";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, Truck, ShieldCheck, Heart, ChevronLeft } from "lucide-react";
 import { notFound } from "next/navigation";
-import ProductActions from "../../../components/ProductActions";
-import ReviewSection from "../../../components/ReviewSection";
+import ProductActions from "@/components/ProductActions";
+import ReviewSection from "@/components/ReviewSection";
 import { Metadata } from "next";
 
 export async function generateMetadata(
@@ -63,18 +63,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       <Header />
       
       <div className="max-w-[1920px] mx-auto px-4 md:px-8 py-6">
-        <button 
-          onClick={() => {
-            if (window.history.length > 1) {
-              router.back();
-            } else {
-              router.push("/collection");
-            }
-          }}
+        <Link 
+          href="/collection"
           className="inline-flex items-center gap-2 text-[#666] hover:text-[#d4af37] transition-colors text-[10px] font-bold uppercase tracking-[0.3em] mb-4"
         >
           <ChevronLeft size={14} /> Back to Collection
-        </button>
+        </Link>
         <div className="flex flex-col md:flex-row gap-12 lg:gap-20">
           {/* Left Column - Product Image */}
           <div className="w-full md:w-1/2 flex justify-center sticky top-28 h-fit">

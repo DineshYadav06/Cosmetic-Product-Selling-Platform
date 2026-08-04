@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Header from "../../../components/Header";
-import Footer from "../../../components/Footer";
-import ProductCard from "../../../components/ProductCard";
+import { useState, useEffect, use } from "react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import ProductCard from "@/components/ProductCard";
 import { 
   Store, 
   MapPin, 
@@ -18,7 +18,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-export default function StorePage({ params }: { params: { name: string } }) {
+export default function StorePage({ params }: { params: Promise<{ name: string }> }) {
+  const resolvedParams = use(params);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -26,7 +27,7 @@ export default function StorePage({ params }: { params: { name: string } }) {
   useEffect(() => {
     const fetchStore = async () => {
       try {
-        const res = await fetch(`/api/store/${params.name}`);
+        const res = await fetch(`/api/store/${resolvedParams.name}`);
         const result = await res.json();
         if (res.ok) {
           setData(result);
@@ -40,7 +41,7 @@ export default function StorePage({ params }: { params: { name: string } }) {
       }
     };
     fetchStore();
-  }, [params.name]);
+  }, [resolvedParams.name]);
 
   if (loading) {
     return (

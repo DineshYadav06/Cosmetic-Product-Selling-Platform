@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import ProductCard from "./ProductCard";
-import { Filter, SlidersHorizontal, ChevronDown, Check } from "lucide-react";
+import { Filter, SlidersHorizontal, ChevronDown, Check, ChevronLeft } from "lucide-react";
 
 interface Product {
   id: string;

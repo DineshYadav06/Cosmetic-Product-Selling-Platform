@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '../../../../lib/mongodb';
-import Product from '../../../../lib/models/Product';
+import connectToDatabase from '@/lib/mongodb';
+import Product from '@/lib/models/Product';
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectToDatabase();
     const { name, rating, comment } = await request.json();
-    const productId = params.id;
+    const { id: productId } = await params;
 
     if (!name || !rating || !comment) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });

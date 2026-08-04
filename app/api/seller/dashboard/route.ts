@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import connectToDatabase from '../../../../lib/mongodb';
-import Product from '../../../../lib/models/Product';
-import Order from '../../../../lib/models/Order';
-import { verifyAuth, hasRole } from '../../../../lib/utils/auth';
+import connectToDatabase from '@/lib/mongodb';
+import Product from '@/lib/models/Product';
+import Order from '@/lib/models/Order';
+import { verifyAuth, hasRole } from '@/lib/utils/auth';
 
 export async function GET() {
   try {
@@ -19,37 +19,40 @@ export async function GET() {
     const totalProducts = await Product.countDocuments({ sellerId });
 
     // 2. Total Revenue & Orders
-    // Note: This assumes Order model has items with productId and price
-    // Since aggregation might be complex depending on schema, we'll do a basic fetch and filter
-    const orders = await Order.find({ 'items.sellerId': sellerId }).sort({ createdAt: -1 });
+    const orders = await Order.find({}).sort({ createdAt: -1 }).lean();
     
     let totalRevenue = 0;
     let pendingOrders = 0;
     const recentOrders = [];
 
-    for (const order of orders) {
+    for (const order of (orders as any[])) {
       let orderAmountForSeller = 0;
       let hasSellerItems = false;
 
-      for (const item of order.items) {
-        if (item.sellerId?.toString() === sellerId) {
-          orderAmountForSeller += (item.price * item.quantity);
+      const items = order.items || order.products || [];
+      for (const item of items) {
+        if (item.sellerId?.toString() === sellerId || !item.sellerId) {
+          orderAmountForSeller += (item.price * (item.quantity || 1));
           hasSellerItems = true;
         }
       }
 
       if (hasSellerItems) {
         totalRevenue += orderAmountForSeller;
-        if (order.status === 'Processing' || order.status === 'Pending') {
+        const status = order.status || (order.isDelivered ? 'Delivered' : (order.isPaid ? 'Processing' : 'Pending'));
+        if (status === 'Processing' || status === 'Pending') {
           pendingOrders++;
         }
         
         if (recentOrders.length < 5) {
+          const customerName = order.shippingAddress?.firstName 
+            ? `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}` 
+            : (order.shippingAddress?.name || 'Anonymous');
           recentOrders.push({
             id: order._id,
-            customer: order.shippingAddress?.name || 'Anonymous',
+            customer: customerName,
             amount: orderAmountForSeller,
-            status: order.status,
+            status: status,
             createdAt: order.createdAt
           });
         }

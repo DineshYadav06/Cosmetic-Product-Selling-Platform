@@ -1,4 +1,7 @@
-import { verifyAuth, hasRole } from '../../../../lib/utils/auth';
+import { NextResponse } from 'next/server';
+import connectToDatabase from '@/lib/mongodb';
+import User from '@/lib/models/User';
+import { verifyAuth, hasRole } from '@/lib/utils/auth';
 
 export async function GET() {
   try {

@@ -9,6 +9,7 @@ export default function Hero() {
         src="https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&q=80&w=2000"
         alt="GLOWMART Luxury Cosmetic Selection"
         fill
+        sizes="100vw"
         className="object-cover object-center brightness-[0.4]"
         priority
       />

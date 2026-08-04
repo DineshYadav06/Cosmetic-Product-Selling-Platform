@@ -56,7 +56,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     return NextResponse.json({ message: 'Review added successfully', product });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
+      return NextResponse.json({ error: error.issues[0]?.message || 'Validation error' }, { status: 400 });
     }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }

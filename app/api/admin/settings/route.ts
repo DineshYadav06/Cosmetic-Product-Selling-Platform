@@ -2,22 +2,37 @@ import { NextResponse } from 'next/server';
 import connectToDatabase from '../../../../lib/mongodb';
 import SiteSettings from '../../../../lib/models/SiteSettings';
 
+const DEFAULT_SETTINGS = {
+  storeName: "Glowmart",
+  supportEmail: "support@glowmart.com",
+  announcementText: "Welcome to Glowmart - Premium Cosmetic Platform",
+  heroOffer: "Up to 40% off on Luxury Fragrances",
+  freeShippingThreshold: 999
+};
+
 export async function GET() {
   try {
-    await connectToDatabase();
+    const conn = await connectToDatabase();
+    if (!conn) {
+      return NextResponse.json(DEFAULT_SETTINGS);
+    }
     let settings = await SiteSettings.findOne({});
     if (!settings) {
       settings = await SiteSettings.create({});
     }
     return NextResponse.json(settings);
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 });
+    console.warn("Using fallback site settings due to DB error:", error);
+    return NextResponse.json(DEFAULT_SETTINGS);
   }
 }
 
 export async function PUT(request: Request) {
   try {
-    await connectToDatabase();
+    const conn = await connectToDatabase();
+    if (!conn) {
+      return NextResponse.json({ error: 'Database not connected. Cannot update settings.' }, { status: 503 });
+    }
     const body = await request.json();
     
     let settings = await SiteSettings.findOne({});
@@ -37,3 +52,4 @@ export async function PUT(request: Request) {
      return NextResponse.json({ error: 'Failed to update settings' }, { status: 500 });
   }
 }
+

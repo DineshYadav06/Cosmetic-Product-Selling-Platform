@@ -60,7 +60,7 @@ export default function CartPage() {
               {cart.map((item) => (
                 <div key={item.id} className="flex gap-6 bg-[#0a0a0a] border border-[#222] p-6 items-center shadow-lg relative h-[180px]">
                    <div className="w-32 h-full relative bg-gradient-to-t from-[#000] to-[#111] border border-[#333] flex-shrink-0 flex items-center justify-center p-2">
-                     <Image src={item.image} alt={item.name} fill className="object-contain drop-shadow-lg p-2" />
+                     <Image src={item.image} alt={item.name} fill sizes="128px" className="object-contain drop-shadow-lg p-2" />
                    </div>
                    
                    <div className="flex-1 flex flex-col justify-center h-full">

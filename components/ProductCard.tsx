@@ -7,30 +7,32 @@ import { useStore } from "../lib/context/StoreContext";
 import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
-  id: string;
-  brand: string;
-  name: string;
-  price: number;
+  id?: string;
+  brand?: string;
+  name?: string;
+  price?: number;
   originalPrice?: number;
-  image: string;
-  rating: number;
-  reviews: number;
+  image?: string;
+  rating?: number;
+  reviews?: number;
   isAI?: boolean;
   sellerPlan?: 'basic' | 'pro' | 'premium';
+  product?: any;
 }
 
-export default function ProductCard({
-  id,
-  brand,
-  name,
-  price,
-  originalPrice,
-  image,
-  rating,
-  reviews,
-  isAI,
-  sellerPlan,
-}: ProductCardProps) {
+export default function ProductCard(props: ProductCardProps) {
+  const p = props.product || props;
+  const id = p._id || p.id || "";
+  const brand = p.brand || "";
+  const name = p.name || "";
+  const price = p.price || 0;
+  const originalPrice = p.originalPrice;
+  const image = p.image || "";
+  const rating = p.rating || 0;
+  const reviews = p.reviews || 0;
+  const isAI = props.isAI || p.isAI;
+  const sellerPlan = props.sellerPlan || p.sellerPlan;
+
   const { addToCart } = useStore();
   const router = useRouter();
 
@@ -50,6 +52,7 @@ export default function ProductCard({
           src={image}
           alt={name}
           fill
+          sizes="(max-width: 640px) 200px, (max-width: 1024px) 240px, 280px"
           className="object-contain p-6 group-hover:scale-110 transition-transform duration-700 opacity-90 group-hover:opacity-100 drop-shadow-2xl"
         />
         {originalPrice && (

@@ -262,26 +262,23 @@ export default function AdminProductsPage() {
             </table>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
 
-      {/* Delete confirmation overlay */}
-      {deleteConfirm && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
-          <div className="bg-[#0a0a0a] border border-[#222] p-8 max-w-sm w-full mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
-            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-red-700 to-transparent" />
-            <Trash2 size={32} className="text-red-500 mb-4 mx-auto" />
-            <h3 className="text-lg font-serif font-bold text-center mb-2 tracking-widest">Delete Product?</h3>
-            <p className="text-[#666] text-sm text-center mb-8">This action cannot be undone. The product will be permanently removed.</p>
-            <div className="flex gap-4">
-              <button onClick={() => setDeleteConfirm(null)} className="flex-1 border border-[#333] py-3 text-xs uppercase font-bold tracking-widest hover:border-white hover:text-white transition-all">Cancel</button>
-              <button onClick={() => handleDelete(deleteConfirm)} className="flex-1 bg-red-700 text-white py-3 text-xs uppercase font-bold tracking-widest hover:bg-red-600 transition-all">Delete</button>
+        {/* Delete confirmation overlay */}
+        {deleteConfirm && (
+          <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}>
+            <div className="bg-[#0a0a0a] border border-[#222] p-8 max-w-sm w-full mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+              <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-red-700 to-transparent" />
+              <Trash2 size={32} className="text-red-500 mb-4 mx-auto" />
+              <h3 className="text-lg font-serif font-bold text-center mb-2 tracking-widest">Delete Product?</h3>
+              <p className="text-[#666] text-sm text-center mb-8">This action cannot be undone. The product will be permanently removed.</p>
+              <div className="flex gap-4">
+                <button onClick={() => setDeleteConfirm(null)} className="flex-1 border border-[#333] py-3 text-xs uppercase font-bold tracking-widest hover:border-white hover:text-white transition-all">Cancel</button>
+                <button onClick={() => handleDelete(deleteConfirm)} className="flex-1 bg-red-700 text-white py-3 text-xs uppercase font-bold tracking-widest hover:bg-red-600 transition-all">Delete</button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

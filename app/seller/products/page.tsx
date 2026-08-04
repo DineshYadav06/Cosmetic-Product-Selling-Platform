@@ -12,7 +12,8 @@ import {
   Trash2, 
   ExternalLink,
   Loader2,
-  AlertTriangle
+  AlertTriangle,
+  ChevronLeft
 } from "lucide-react";
 import Link from "next/link";
 

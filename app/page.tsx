@@ -53,7 +53,7 @@ export default async function Home() {
   const displayNewArrivals = newArrivals.length ? newArrivals : parseProducts.slice(0, 5);
   
   // Use latest real database products for mid-page promotional banners
-  const promo1 = parseProducts[0] || { name: 'Daily Glow', brand: 'Skincare', image: 'https://images.unsplash.com/photo-1596462502278-27bf85033e5a?auto=format&fit=crop&q=80&w=1000' };
+  const promo1 = parseProducts[0] || { name: 'Daily Glow', brand: 'Skincare', image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&q=80&w=1000' };
   const promo2 = parseProducts[1] || { name: 'Party Ready', brand: 'Makeup', image: 'https://images.unsplash.com/photo-1512496015851-a1c869237a17?auto=format&fit=crop&q=80&w=1000' };
 
   return (
@@ -105,9 +105,10 @@ export default async function Home() {
              <div className="absolute inset-0 border border-[#d4af37]/20 translate-x-4 translate-y-4" />
              <div className="absolute inset-0 border border-white/10 -translate-x-4 -translate-y-4" />
              <Image 
-                src="https://images.unsplash.com/photo-1596462502278-27bf85033e5a?auto=format&fit=crop&q=80&w=800" 
+                src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&q=80&w=800" 
                 alt="AI Skin Analysis" 
                 fill 
+                sizes="(max-width: 768px) 100vw, 450px"
                 className="object-cover grayscale hover:grayscale-0 transition-all duration-1000"
              />
              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
@@ -168,6 +169,7 @@ export default async function Home() {
                src="https://images.unsplash.com/photo-1573461160327-b450ce3d8e7f?auto=format&fit=crop&q=80&w=800" 
                alt="Artisan at work" 
                fill 
+               sizes="(max-width: 1024px) 100vw, 50vw"
                className="object-cover grayscale hover:grayscale-0 transition-all duration-1000"
              />
              <div className="absolute inset-0 bg-black/40" />

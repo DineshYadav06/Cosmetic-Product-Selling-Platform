@@ -3,9 +3,9 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, LayoutDashboard, Package, ClipboardList, ShoppingBag, Settings, Image as ImageIcon, CheckCircle2 } from "lucide-react";
-import AdminSidebar from "../../../components/admin/Sidebar";
-import { useStore } from "../../../lib/context/StoreContext";
+import { ChevronLeft, LayoutDashboard, Package, ClipboardList, ShoppingBag, Settings, Image as ImageIcon, CheckCircle2, Loader2 } from "lucide-react";
+import AdminSidebar from "@/components/admin/Sidebar";
+import { useStore } from "@/lib/context/StoreContext";
 
 const CATEGORIES = ["Bestsellers", "Just Dropped", "Makeup", "Skincare", "Fragrance", "Haircare", "Gift Sets"];
 const SKIN_TYPES = ["Oily", "Dry", "Combination", "Sensitive", "Normal", "Mature"];

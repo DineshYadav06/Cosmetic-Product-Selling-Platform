@@ -8,9 +8,9 @@ import {
   ShieldCheck, Sparkles, Building2, CreditCard, Landmark, 
   MapPin, Briefcase, ChevronLeft, ChevronRight 
 } from "lucide-react";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
-import { useStore } from "../../lib/context/StoreContext";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { useStore } from "@/lib/context/StoreContext";
 
 export default function SellerRegister() {
   const router = useRouter();

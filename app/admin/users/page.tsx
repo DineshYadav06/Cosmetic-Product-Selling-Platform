@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import AdminSidebar from "../../../components/admin/Sidebar";
+import Link from "next/link";
+import AdminSidebar from "@/components/admin/Sidebar";
 import { 
   Users, 
   Search, 
@@ -14,7 +15,9 @@ import {
   Loader2,
   CheckCircle2,
   XCircle,
-  MoreVertical
+  MoreVertical,
+  ChevronLeft,
+  Clock
 } from "lucide-react";
 
 export default function AdminUsers() {
