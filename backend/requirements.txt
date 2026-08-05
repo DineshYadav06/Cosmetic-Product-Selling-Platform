@@ -1,0 +1,11 @@
+fastapi[standard]
+uvicorn
+motor
+beanie
+pydantic
+pydantic-settings
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+emails
+tensorflow\nPillow\nnumpy\n
