@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send, Bot, User, Camera, ShoppingBag, Sparkles, ExternalLink } from "lucide-react";
+import { MessageCircle, X, Send, Bot, User, Camera, ShoppingBag, Sparkles, ExternalLink, RotateCcw, ShieldAlert, HeartHandshake } from "lucide-react";
 import Link from "next/link";
 import { useStore } from "../lib/context/StoreContext";
 
@@ -26,75 +26,112 @@ interface Message {
   askForImage?: boolean;
 }
 
-function renderBoldText(text: string) {
-  const parts = text.split(/(\*\*.*?\*\*)/g);
-  return parts.map((part, i) => {
-    if (part.startsWith('**') && part.endsWith('**')) {
-      return <strong key={i} className="font-bold text-gray-900">{part.slice(2, -2)}</strong>;
-    }
-    return part;
-  });
+const INITIAL_WELCOME_MESSAGE: Message = { 
+  role: "bot", 
+  text: "🌿 **Welcome to GLOWMART Skin Care**\nHello! I'm your dedicated AI Dermatology Advisor. I'm here to understand your skin's unique needs, diagnose concerns, and prescribe the gentlest, most effective chemical formulations.\n\nTell me what your skin is experiencing today, or select an option below:",
+  quickQuestions: ["📷 Scan Face Photo", "Acne & Redness", "Dry & Sensitive Skin", "Dark Circles & Eyes"],
+  askForImage: true
+};
+
+function renderCleanText(text: string) {
+  if (!text) return null;
+  // Strip excess raw markdown formatting clutter
+  const cleaned = text.replace(/\*\*/g, '').trim();
+  return <span className="text-gray-200">{cleaned}</span>;
 }
 
 function FormattedBotText({ text }: { text: string }) {
   if (!text) return null;
 
-  const lines = text.split('\n');
+  // Split into paragraphs / sections
+  const sections = text.split('\n\n');
 
   return (
-    <div className="flex flex-col gap-1.5 text-xs text-gray-800 leading-relaxed font-sans">
-      {lines.map((line, idx) => {
-        const trimmed = line.trim();
-        if (!trimmed) return <div key={idx} className="h-1" />;
+    <div className="flex flex-col gap-3 text-xs leading-relaxed font-sans text-gray-200 w-full overflow-hidden break-words">
+      {sections.map((section, sIdx) => {
+        const trimmedSection = section.trim();
+        if (!trimmedSection) return null;
 
-        // Chemical Composition Callout Box
-        if (trimmed.includes('🧪 PRESCRIBED') || trimmed.includes('🧪 **PRESCRIBED')) {
-          const content = trimmed.replace(/^.*(?:🧪|\*\*PRESCRIBED CHEMICAL FORMULA\*\*|\*\*PRESCRIBED FORMULA\*\*):?\s*/i, '');
+        // 1. Prescribed Chemical Formula Box
+        if (trimmedSection.includes('PRESCRIBED') || trimmedSection.includes('🧪')) {
+          // Extract content after header lines
+          const lines = trimmedSection.split('\n');
+          const formulaLines = lines.filter(l => !l.toLowerCase().includes('prescribed') && !l.includes('🧪')).join(' ').trim();
+          const displayFormula = formulaLines || lines[lines.length - 1].replace(/^[🧪\*\s:]+/, '').trim();
+
           return (
-            <div key={idx} className="my-1.5 p-3 bg-[#d4af37]/10 border border-[#d4af37]/40 rounded-lg shadow-2xs">
+            <div key={sIdx} className="my-1 p-3 bg-[#d4af37]/10 border border-[#d4af37]/40 rounded-xl w-full overflow-hidden">
               <div className="flex items-center gap-1.5 text-[#d4af37] text-[10px] font-extrabold uppercase tracking-widest mb-1">
-                🧪 Prescribed Chemical Composition Formula
+                🧪 Prescribed Active Formula
               </div>
-              <p className="text-gray-900 font-mono font-bold text-xs">{content || trimmed}</p>
+              <p className="text-white font-mono font-bold text-xs break-words">
+                {displayFormula.replace(/\*\*/g, '')}
+              </p>
             </div>
           );
         }
 
-        // Safety Warning Box
-        if (trimmed.includes('⚠️ SAFETY') || trimmed.includes('⚠️ **SAFETY')) {
-          const content = trimmed.replace(/^.*(?:⚠️|\*\*SAFETY NOTE\*\*):?\s*/i, '');
+        // 2. Safety Warning Box
+        if (trimmedSection.includes('SAFETY') || trimmedSection.includes('⚠️')) {
+          const lines = trimmedSection.split('\n');
+          const warningContent = lines.filter(l => !l.toLowerCase().includes('safety') && !l.includes('⚠️')).join(' ').trim() || lines[lines.length - 1].replace(/^[⚠️\*\s:]+/, '');
+
           return (
-            <div key={idx} className="my-1 p-2.5 bg-red-50 border border-red-200 text-red-900 rounded-lg text-xs font-medium">
-              <div className="font-bold text-[10px] uppercase tracking-wider text-red-700 mb-0.5 flex items-center gap-1">
-                ⚠️ Layering & Safety Warning
+            <div key={sIdx} className="my-1 p-3 bg-amber-950/40 border border-amber-500/30 text-amber-200 rounded-xl text-xs w-full overflow-hidden">
+              <div className="font-bold text-[10px] uppercase tracking-wider text-amber-400 mb-1 flex items-center gap-1">
+                <ShieldAlert size={13} /> Skincare Care Note
               </div>
-              <span>{content || trimmed}</span>
+              <p className="text-amber-100/90 font-medium leading-relaxed break-words">
+                {warningContent.replace(/\*\*/g, '')}
+              </p>
             </div>
           );
         }
 
-        // Section Headers (🔬, 💡, 📋, 👨‍⚕️, ###)
-        if (trimmed.startsWith('🔬') || trimmed.startsWith('💡') || trimmed.startsWith('📋') || trimmed.startsWith('👨‍⚕️') || trimmed.startsWith('###')) {
-          const cleanHeader = trimmed.replace(/^###\s*/, '').replace(/\*\*/g, '');
-          return (
-            <div key={idx} className="mt-2 mb-0.5 pt-1.5 border-t border-gray-100 font-bold text-[11px] uppercase tracking-wider text-[#d4af37] flex items-center gap-1">
-              {cleanHeader}
-            </div>
-          );
-        }
+        // 3. Section Headers (Clinical Diagnosis, Mechanism, Routine)
+        const lines = trimmedSection.split('\n');
+        return (
+          <div key={sIdx} className="space-y-1.5 w-full overflow-hidden">
+            {lines.map((line, lIdx) => {
+              const trimmedLine = line.trim();
+              if (!trimmedLine) return null;
 
-        // Bullet lists
-        if (trimmed.startsWith('- ') || trimmed.startsWith('• ') || /^\d+\.\s/.test(trimmed)) {
-          const bulletContent = trimmed.replace(/^[-•\d+\.]\s*/, '');
-          return (
-            <div key={idx} className="flex items-start gap-2 pl-1">
-              <span className="text-[#d4af37] font-bold text-xs shrink-0">•</span>
-              <div>{renderBoldText(bulletContent)}</div>
-            </div>
-          );
-        }
+              // Header lines (🔬, 💡, 📋, 🌿, 👨‍⚕️, ###)
+              if (
+                trimmedLine.startsWith('🔬') || 
+                trimmedLine.startsWith('💡') || 
+                trimmedLine.startsWith('📋') || 
+                trimmedLine.startsWith('🌿') || 
+                trimmedLine.startsWith('👨‍⚕️') || 
+                trimmedLine.startsWith('###')
+              ) {
+                const cleanHeader = trimmedLine.replace(/^###\s*/, '').replace(/\*\*/g, '');
+                return (
+                  <div key={lIdx} className="pt-2 font-serif font-bold text-[12px] tracking-wide text-[#d4af37] flex items-center gap-1.5 border-t border-white/5">
+                    {cleanHeader}
+                  </div>
+                );
+              }
 
-        return <div key={idx}>{renderBoldText(trimmed)}</div>;
+              // Bullet Routine lines (- or •)
+              if (trimmedLine.startsWith('- ') || trimmedLine.startsWith('• ') || /^\d+\.\s/.test(trimmedLine)) {
+                const bulletText = trimmedLine.replace(/^[-•\d+\.]\s*/, '').replace(/\*\*/g, '');
+                return (
+                  <div key={lIdx} className="flex items-start gap-2 pl-1 w-full overflow-hidden">
+                    <span className="text-[#d4af37] font-bold text-xs shrink-0 mt-0.5">•</span>
+                    <span className="text-gray-300 text-xs font-light leading-relaxed break-words">{bulletText}</span>
+                  </div>
+                );
+              }
+
+              return (
+                <p key={lIdx} className="text-gray-300 text-xs leading-relaxed break-words">
+                  {trimmedLine.replace(/\*\*/g, '')}
+                </p>
+              );
+            })}
+          </div>
+        );
       })}
     </div>
   );
@@ -103,14 +140,7 @@ function FormattedBotText({ text }: { text: string }) {
 export default function Chatbot() {
   const { addToCart } = useStore();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { 
-      role: "bot", 
-      text: "👨‍⚕️ **GLOWMART AI CLINICAL DERMATOLOGIST**\nWelcome to your personalized skin consultation! I prescribe exact chemical composition formulas and scan site product offers for your skin.\n\nTo begin your diagnostic evaluation, describe your skin issue or tap a choice below:",
-      quickQuestions: ["📷 Attach Photo for 98% Scan", "Oily & Acne-Prone", "Dry & Sensitive", "Dark Spots & PIH"],
-      askForImage: true
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([INITIAL_WELCOME_MESSAGE]);
   const [input, setInput] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -121,42 +151,49 @@ export default function Chatbot() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleResetSession = () => {
+    setMessages([INITIAL_WELCOME_MESSAGE]);
+    setSelectedImage(null);
+    setInput("");
+    try {
+      localStorage.removeItem("glowmart_chat_history");
+      sessionStorage.removeItem("glowmart_chat_history");
+    } catch (e) {
+      console.error("Failed to clear chat storage", e);
+    }
+  };
+
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("glowmart_chat_history");
+      const saved = sessionStorage.getItem("glowmart_chat_history");
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Date.now() - parsed.timestamp < 7 * 24 * 60 * 60 * 1000) {
-          setMessages(parsed.messages);
-        } else {
-          localStorage.removeItem("glowmart_chat_history");
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMessages(parsed);
         }
       }
     } catch (e) {
-      console.error("Failed to load chat history", e);
+      console.error("Failed to load chat session history", e);
     }
   }, []);
 
   useEffect(() => {
     if (messages.length > 1) {
-      localStorage.setItem("glowmart_chat_history", JSON.stringify({
-        messages,
-        timestamp: Date.now()
-      }));
+      try {
+        sessionStorage.setItem("glowmart_chat_history", JSON.stringify(messages));
+      } catch (e) {
+        console.error("Failed to save chat session", e);
+      }
     }
   }, [messages]);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isOpen]);
+  }, [messages, isLoading]);
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 4 * 1024 * 1024) {
-        alert("Image is too large. Please select an image under 4MB.");
-        return;
-      }
       const reader = new FileReader();
       reader.onloadend = () => {
         setSelectedImage(reader.result as string);
@@ -165,28 +202,32 @@ export default function Chatbot() {
     }
   };
 
-  const clearImage = () => {
-    setSelectedImage(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
+  const sendMessageText = async (userText: string, imageBase64?: string | null) => {
+    if ((!userText.trim() && !imageBase64) || isLoading) return;
 
-  const sendMessageText = async (textToSend: string, imageToSend?: string | null) => {
-    if (!textToSend.trim() && !imageToSend) return;
+    const newMsg: Message = { 
+      role: "user", 
+      text: userText,
+      image: imageBase64 || undefined
+    };
 
-    const userMessage = textToSend.trim();
-    const currentImg = imageToSend || undefined;
-
-    const newMessages: Message[] = [...messages, { role: "user", text: userMessage, image: currentImg }];
-    setMessages(newMessages);
+    const updatedHistory = [...messages, newMsg];
+    setMessages(updatedHistory);
     setInput("");
-    clearImage();
+    setSelectedImage(null);
     setIsLoading(true);
 
     try {
+      const apiHistory = updatedHistory.map(m => ({
+        role: m.role,
+        text: m.text,
+        image: m.image
+      }));
+
       const response = await fetch("/api/bot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ history: newMessages })
+        body: JSON.stringify({ history: apiHistory })
       });
 
       const data = await response.json();
@@ -202,7 +243,7 @@ export default function Chatbot() {
       } else {
         setMessages(prev => [...prev, { 
           role: "bot", 
-          text: "Sorry, I am having trouble connecting to AI services right now. " + (data.error || "") 
+          text: "I am having trouble connecting to AI services right now. " + (data.error || "") 
         }]);
       }
     } catch (error) {
@@ -220,153 +261,131 @@ export default function Chatbot() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 bg-black text-white p-4 rounded-full shadow-2xl hover:bg-gray-800 transition-all z-50 flex items-center justify-center border border-gray-700 ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
+        className={`fixed bottom-6 right-6 bg-[#d4af37] text-black p-4 rounded-full shadow-[0_0_30px_rgba(212,175,55,0.4)] hover:bg-white transition-all z-50 flex items-center justify-center border-2 border-black ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
         aria-label="Open AI Skincare Chatbot"
       >
-        <MessageCircle size={28} />
+        <MessageCircle size={26} className="fill-black" />
       </button>
 
       <div
-        className={`fixed bottom-6 right-6 w-[360px] sm:w-[430px] h-[620px] bg-white border border-gray-200 rounded-2xl shadow-2xl flex flex-col overflow-hidden z-50 transition-all duration-300 origin-bottom-right ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'}`}
+        className={`fixed bottom-6 right-6 w-[360px] sm:w-[440px] h-[640px] max-h-[85vh] bg-[#0c0c0c] border-2 border-[#d4af37]/40 rounded-2xl shadow-[0_0_60px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden z-50 transition-all duration-300 origin-bottom-right ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'}`}
       >
         {/* Header */}
-        <div className="bg-black text-white p-4 flex justify-between items-center shrink-0">
+        <div className="bg-black text-white p-4 flex justify-between items-center shrink-0 border-b border-[#222]">
           <div className="flex items-center gap-3">
-            <div className="bg-[#d4af37]/20 p-2 rounded-lg border border-[#d4af37]/40">
-              <Bot size={22} className="text-[#d4af37]" />
+            <div className="bg-[#d4af37]/20 p-2 rounded-xl border border-[#d4af37]/40">
+              <Bot size={20} className="text-[#d4af37]" />
             </div>
             <div>
-              <h3 className="font-bold uppercase tracking-widest text-sm flex items-center gap-1.5">
-                Glowmart AI <Sparkles size={14} className="text-[#d4af37]" />
+              <h3 className="font-serif font-bold uppercase tracking-widest text-sm text-[#d4af37] flex items-center gap-1.5">
+                GLOWMART AI <Sparkles size={14} className="text-[#d4af37] animate-pulse" />
               </h3>
-              <p className="text-[10px] text-gray-400">Clinical Dermatologist Assistant</p>
+              <p className="text-[10px] text-gray-400 font-medium">Skin Care Dermatology Advisor</p>
             </div>
           </div>
-          <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white transition-colors">
-            <X size={20} />
-          </button>
+          
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={handleResetSession} 
+              className="text-gray-400 hover:text-[#d4af37] transition-colors p-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 px-2 py-1 rounded-lg"
+              title="Reset Consultation Session"
+            >
+              <RotateCcw size={12} /> Reset
+            </button>
+            <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white transition-colors p-1">
+              <X size={20} />
+            </button>
+          </div>
         </div>
 
         {/* Message Stream */}
-        <div className="flex-1 p-4 overflow-y-auto bg-gray-50 flex flex-col gap-4">
+        <div className="flex-1 p-4 overflow-y-auto bg-[#0a0a0a] flex flex-col gap-4">
           {messages.map((msg, i) => (
-            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[92%] rounded-2xl p-3.5 text-sm flex gap-2.5 items-start ${msg.role === 'user' ? 'bg-black text-white rounded-tr-none' : 'bg-white border border-gray-200 text-black rounded-tl-none shadow-sm'}`}>
+            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} w-full`}>
+              <div className={`max-w-[90%] rounded-2xl p-3.5 text-xs flex gap-2.5 items-start overflow-hidden ${
+                msg.role === 'user' 
+                  ? 'bg-[#d4af37] text-black font-medium rounded-tr-none shadow-md' 
+                  : 'bg-[#141414] border border-[#242424] text-white rounded-tl-none shadow-inner'
+              }`}>
                 {msg.role === 'bot' && <Bot size={18} className="text-[#d4af37] mt-0.5 shrink-0" />}
-                <div className="flex flex-col gap-3 w-full">
+                <div className="flex flex-col gap-3 w-full overflow-hidden">
                   {msg.image && (
-                    <img src={msg.image} alt="User skin scan" className="rounded-lg w-full object-cover max-h-[160px] border border-gray-300" />
+                    <img src={msg.image} alt="User skin scan" className="rounded-lg w-full object-cover max-h-[160px] border border-white/10" />
                   )}
                   
                   {msg.role === 'bot' ? (
                     <FormattedBotText text={msg.text} />
                   ) : (
-                    <p className="leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                    <p className="whitespace-pre-wrap leading-relaxed text-xs font-medium break-words text-black">{msg.text}</p>
                   )}
 
-                  {/* Photo Upload CTA Box inside bot bubble */}
-                  {msg.askForImage && msg.role === 'bot' && (
-                    <div className="bg-[#d4af37]/10 border border-[#d4af37]/40 p-3 rounded-lg flex items-center justify-between gap-3 my-1">
-                      <div className="flex items-center gap-2">
-                        <Camera size={18} className="text-[#d4af37] shrink-0 animate-pulse" />
-                        <div>
-                          <p className="text-[10px] font-bold text-gray-900 uppercase">98%+ Clinical Precision</p>
-                          <p className="text-[9px] text-gray-600">Attach skin photo for visual scan</p>
-                        </div>
+                  {/* Recommended Products Cards */}
+                  {msg.products && msg.products.length > 0 && (
+                    <div className="mt-2 pt-3 border-t border-white/10 w-full overflow-hidden">
+                      <p className="text-[10px] font-extrabold uppercase tracking-widest text-[#d4af37] mb-2 flex items-center gap-1">
+                        <ShoppingBag size={12} /> Prescribed Product Matches
+                      </p>
+                      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
+                        {msg.products.map(p => (
+                          <div key={p.id} className="w-[140px] shrink-0 bg-black border border-[#262626] rounded-xl p-2.5 flex flex-col justify-between group">
+                            <div className="relative aspect-square w-full rounded-lg overflow-hidden mb-2 bg-gray-900 border border-white/10">
+                              <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                              {p.offerBadge && (
+                                <span className="absolute top-1 right-1 bg-[#d4af37] text-black font-extrabold text-[8px] px-1.5 py-0.5 rounded uppercase">
+                                  {p.offerBadge}
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-[9px] font-bold text-[#d4af37] uppercase line-clamp-1">{p.brand}</span>
+                            <h4 className="text-[11px] font-serif font-bold text-white line-clamp-1 mb-1">{p.name}</h4>
+                            <div className="flex items-baseline gap-1 mt-1 mb-2">
+                              <span className="text-xs font-bold text-white">₹{p.price}</span>
+                              {p.originalPrice && p.originalPrice > p.price && (
+                                <span className="text-[9px] text-gray-500 line-through">₹{p.originalPrice}</span>
+                              )}
+                            </div>
+                            <button
+                              onClick={() => addToCart({ id: p.id, brand: p.brand, name: p.name, price: p.price, image: p.image })}
+                              className="w-full bg-[#d4af37] text-black hover:bg-white transition-colors text-[9px] font-extrabold py-1.5 rounded-lg uppercase tracking-wider"
+                            >
+                              Add to Bag
+                            </button>
+                          </div>
+                        ))}
                       </div>
-                      <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="bg-black text-[#d4af37] border border-[#d4af37] px-3 py-1.5 rounded text-[9px] font-bold uppercase hover:bg-[#d4af37] hover:text-black transition-colors shrink-0"
-                      >
-                        📷 Scan Photo
-                      </button>
                     </div>
                   )}
 
-                  {/* Interactive Diagnostic Option Chips */}
-                  {msg.quickQuestions && msg.quickQuestions.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 pt-1">
+                  {/* Quick Diagnostic Suggestions */}
+                  {msg.quickQuestions && msg.quickQuestions.length > 0 && i === messages.length - 1 && !isLoading && (
+                    <div className="mt-2 pt-2 flex flex-wrap gap-1.5 w-full">
                       {msg.quickQuestions.map((q, idx) => (
                         <button
                           key={idx}
                           onClick={() => {
-                            if (q.includes("Photo") || q.includes("Scan")) {
+                            if (q.includes("Attach Photo") || q.includes("Scan Face Photo") || q.includes("Upload Photo")) {
                               fileInputRef.current?.click();
                             } else {
                               sendMessageText(q);
                             }
                           }}
-                          className="text-left text-[11px] bg-gray-100 hover:bg-black hover:text-white text-gray-800 border border-gray-300 font-semibold px-2.5 py-1 rounded-full transition-all shadow-2xs"
+                          className="text-[10px] bg-[#1a1a1a] hover:bg-[#d4af37] hover:text-black border border-[#333] text-gray-300 font-bold px-3 py-1.5 rounded-full transition-all text-left"
                         >
                           {q}
                         </button>
                       ))}
                     </div>
                   )}
-
-                  {/* Render Recommended Product Cards */}
-                  {msg.products && msg.products.length > 0 && (
-                    <div className="flex flex-col gap-2 mt-2 pt-2 border-t border-gray-100">
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-[#d4af37]">Recommended Products & Catalog Offers</p>
-                      <div className="grid grid-cols-1 gap-2">
-                        {msg.products.map((prod) => (
-                          <div key={prod.id} className="bg-gray-50 p-2.5 rounded-lg border border-gray-200 flex items-center gap-3 relative overflow-hidden">
-                            <img src={prod.image} alt={prod.name} className="w-12 h-12 rounded object-cover border border-gray-200 shrink-0" />
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1">
-                                <p className="text-[9px] font-bold text-gray-500 uppercase line-clamp-1">{prod.brand}</p>
-                                {prod.offerBadge && (
-                                  <span className="text-[8px] bg-[#d4af37] text-black font-extrabold px-1 rounded uppercase">
-                                    {prod.offerBadge}
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-xs font-bold text-gray-900 line-clamp-1">{prod.name}</p>
-                              {prod.chemicalComposition && (
-                                <p className="text-[8px] text-gray-500 font-mono line-clamp-1">🧪 {prod.chemicalComposition}</p>
-                              )}
-                              <div className="flex items-baseline gap-1 mt-0.5">
-                                <span className="text-xs font-bold text-[#d4af37]">₹{prod.price}</span>
-                                {prod.originalPrice && prod.originalPrice > prod.price && (
-                                  <span className="text-[10px] text-gray-400 line-through">₹{prod.originalPrice}</span>
-                                )}
-                              </div>
-                            </div>
-                            <div className="flex flex-col gap-1 shrink-0">
-                              <button
-                                onClick={() => addToCart({ id: prod.id, brand: prod.brand, name: prod.name, price: prod.price, image: prod.image })}
-                                className="bg-black text-white p-1.5 rounded hover:bg-gray-800 transition-colors flex items-center gap-1 text-[9px] font-bold uppercase"
-                                title="Add to Bag"
-                              >
-                                <ShoppingBag size={12} /> Add
-                              </button>
-                              <Link
-                                href={`/product/${prod.id}`}
-                                className="text-[9px] text-gray-600 hover:text-black flex items-center gap-0.5 font-semibold justify-center"
-                              >
-                                View <ExternalLink size={10} />
-                              </Link>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
-                {msg.role === 'user' && <User size={16} className="text-gray-400 mt-0.5 shrink-0" />}
               </div>
             </div>
           ))}
 
           {isLoading && (
             <div className="flex justify-start">
-              <div className="max-w-[80%] rounded-2xl p-3 text-sm bg-white border border-gray-200 text-black rounded-tl-none flex items-center gap-2 shadow-sm">
-                <Bot size={16} className="text-[#d4af37]" />
-                <div className="flex gap-1">
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
-                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></span>
-                </div>
+              <div className="bg-[#141414] border border-[#242424] rounded-2xl rounded-tl-none p-3 shadow-inner flex items-center gap-2 text-xs text-[#d4af37] font-medium">
+                <Bot size={18} className="animate-spin text-[#d4af37]" />
+                <span>Formulating skin care analysis...</span>
               </div>
             </div>
           )}
@@ -374,52 +393,53 @@ export default function Chatbot() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Controls */}
-        <div className="p-3 bg-white border-t border-gray-100 flex flex-col gap-2 shrink-0">
-          {selectedImage && (
-            <div className="relative inline-block w-fit mb-1">
-              <img src={selectedImage} alt="Preview" className="h-16 rounded-md border border-gray-300" />
-              <button
-                onClick={clearImage}
-                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600"
-              >
-                <X size={14} />
-              </button>
+        {/* Selected Image Preview before send */}
+        {selectedImage && (
+          <div className="px-4 py-2 bg-black border-t border-[#222] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <img src={selectedImage} alt="Selected attachment" className="w-8 h-8 rounded object-cover border border-[#d4af37]/40" />
+              <span className="text-[10px] text-gray-300 font-bold uppercase">Face photo attached</span>
             </div>
-          )}
-
-          <div className="flex gap-2 items-center">
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="p-2.5 bg-gray-100 rounded-full text-gray-700 hover:bg-gray-200 transition-colors shrink-0"
-              title="Upload your face photo for AI Skin Analysis"
-            >
-              <Camera size={20} />
-            </button>
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              ref={fileInputRef}
-              onChange={handleImageSelect}
-            />
-
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Ask a question or share skin photo..."
-              className="flex-1 text-black bg-gray-100 rounded-full px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-black transition-all"
-            />
-            <button
-              onClick={handleSend}
-              disabled={isLoading || (!input.trim() && !selectedImage)}
-              className="bg-black text-white p-2.5 rounded-full hover:bg-gray-800 transition-colors disabled:bg-gray-400 shrink-0"
-            >
-              <Send size={18} />
+            <button onClick={() => setSelectedImage(null)} className="text-gray-400 hover:text-red-400">
+              <X size={16} />
             </button>
           </div>
+        )}
+
+        {/* Input Bar */}
+        <div className="p-3 bg-black border-t border-[#222] flex items-center gap-2 shrink-0">
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageUpload}
+            accept="image/*"
+            className="hidden"
+          />
+
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className={`p-2.5 rounded-xl border transition-colors ${selectedImage ? 'bg-[#d4af37]/20 border-[#d4af37] text-[#d4af37]' : 'bg-[#141414] border-[#262626] text-gray-400 hover:text-white'}`}
+            title="Attach face photo for visual scan"
+          >
+            <Camera size={18} />
+          </button>
+
+          <input
+            type="text"
+            placeholder="Ask about your skin, acne, dark spots..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            className="flex-1 text-xs bg-[#141414] border border-[#262626] rounded-xl px-3.5 py-2.5 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#d4af37]"
+          />
+
+          <button
+            onClick={handleSend}
+            disabled={(!input.trim() && !selectedImage) || isLoading}
+            className="bg-[#d4af37] text-black p-2.5 rounded-xl hover:bg-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <Send size={18} />
+          </button>
         </div>
       </div>
     </>

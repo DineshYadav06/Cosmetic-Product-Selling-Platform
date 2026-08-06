@@ -4,8 +4,10 @@ import ProductCarousel from "../components/ProductCarousel";
 import Footer from "../components/Footer";
 import LiveSalesFeed from "../components/LiveSalesFeed";
 import Image from "next/image";
+import Link from "next/link";
 import connectToDatabase from "../lib/mongodb";
 import Product from "../lib/models/Product";
+import { Sparkles, Camera, FileText, ShoppingBag, ShieldCheck } from "lucide-react";
 
 export const dynamic = "force-dynamic"; // Ensure newly added products show up instantly
 
@@ -78,40 +80,73 @@ export default async function Home() {
         <ProductCarousel title="Bestsellers" products={displayBestsellers} />
       </div>
 
-      {/* AI Consultant CTA */}
+      {/* High-End AI Skin Vision Scanner & Sample Prescription Showcase */}
       <section className="max-w-[1920px] mx-auto px-4 md:px-8 py-16">
-        <div className="relative bg-[#0a0a0a] border border-[#1a1a1a] overflow-hidden p-8 md:p-20 flex flex-col md:flex-row items-center gap-12 group">
+        <div className="relative bg-[#0a0a0a] border-2 border-[#d4af37]/40 overflow-hidden p-8 md:p-20 flex flex-col md:flex-row items-center gap-12 group rounded-2xl shadow-[0_0_50px_rgba(212,175,55,0.15)]">
           <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#d4af37]/10 blur-[100px] rounded-full group-hover:bg-[#d4af37]/20 transition-colors duration-700" />
           
           <div className="flex-1 z-10 text-center md:text-left">
-            <div className="inline-flex items-center gap-2 text-[#d4af37] mb-6 px-4 py-1.5 border border-[#d4af37]/30 bg-[#d4af37]/5">
-              <span className="text-[10px] font-bold uppercase tracking-[0.3em]">AI-Powered Skincare</span>
+            <div className="inline-flex items-center gap-2 text-[#d4af37] mb-6 px-4 py-1.5 border border-[#d4af37]/40 bg-[#d4af37]/10 rounded-full">
+              <Sparkles size={14} className="animate-pulse" />
+              <span className="text-[10px] font-extrabold uppercase tracking-[0.3em]">AI Clinical Skin Scanner & Rx Prescription</span>
             </div>
+
             <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mb-6 leading-tight">
-              Analyze Your Skin <br /> with <span className="italic text-[#d4af37]">Glowmart AI</span>
+              Scan Your Skin & Get <br />
+              An Official <span className="italic text-transparent bg-clip-text bg-gradient-to-r from-white via-[#f5e6c8] to-[#d4af37]">Rx Prescription</span>
             </h2>
-            <p className="text-gray-400 text-lg mb-10 max-w-xl leading-relaxed">
-              Skip the guesswork. Our advanced AI scans your skin profile to recommend the perfect premium regimen tailored just for you.
+
+            <p className="text-gray-400 text-lg mb-8 max-w-xl leading-relaxed font-light">
+              Experience board-certified AI dermatology. Real-time vision scanning generates a printable sample prescription certificate paired directly with active products available in our store.
             </p>
-            <a 
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10 text-left">
+              <div className="bg-black/60 p-4 border border-[#d4af37]/20 rounded-lg">
+                <Camera size={20} className="text-[#d4af37] mb-2" />
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider">HUD Camera Scan</h4>
+                <p className="text-[10px] text-gray-500 mt-1">Live face mesh, TEWL & redness analysis</p>
+              </div>
+
+              <div className="bg-black/60 p-4 border border-[#d4af37]/20 rounded-lg">
+                <FileText size={20} className="text-[#d4af37] mb-2" />
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider">Sample Rx Certificate</h4>
+                <p className="text-[10px] text-gray-500 mt-1">Printable active chemical prescription</p>
+              </div>
+
+              <div className="bg-black/60 p-4 border border-[#d4af37]/20 rounded-lg">
+                <ShoppingBag size={20} className="text-[#d4af37] mb-2" />
+                <h4 className="text-xs font-bold text-white uppercase tracking-wider">1-Click Store Match</h4>
+                <p className="text-[10px] text-gray-500 mt-1">Buy prescribed catalog bundle instantly</p>
+              </div>
+            </div>
+
+            <Link 
               href="/ai-consultant"
-              className="inline-flex items-center gap-4 bg-[#d4af37] text-black px-10 py-4 font-bold uppercase tracking-[0.2em] text-xs hover:bg-white transition-all shadow-[0_0_25px_rgba(212,175,55,0.2)]"
+              className="inline-flex items-center gap-4 bg-[#d4af37] text-black px-10 py-4 font-extrabold uppercase tracking-[0.2em] text-xs hover:bg-white transition-all shadow-[0_0_25px_rgba(212,175,55,0.3)] rounded-lg"
             >
-              Start Free Analysis <div className="w-6 h-[1px] bg-black" />
-            </a>
+              <Camera size={18} /> Launch AI Skin Scanner & Rx Certificate <div className="w-6 h-[1px] bg-black" />
+            </Link>
           </div>
 
-          <div className="flex-1 relative aspect-square w-full max-w-md z-10">
-             <div className="absolute inset-0 border border-[#d4af37]/20 translate-x-4 translate-y-4" />
-             <div className="absolute inset-0 border border-white/10 -translate-x-4 -translate-y-4" />
+          <div className="flex-1 relative aspect-[4/5] w-full max-w-md z-10 rounded-xl overflow-hidden border-2 border-[#d4af37]/30 shadow-2xl">
              <Image 
                 src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&q=80&w=800" 
-                alt="AI Skin Analysis" 
+                alt="AI Skin Scanner & Rx Prescription" 
                 fill 
                 sizes="(max-width: 768px) 100vw, 450px"
                 className="object-cover grayscale hover:grayscale-0 transition-all duration-1000"
              />
-             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+             
+             {/* HUD Overlay Preview Card */}
+             <div className="absolute bottom-6 left-6 right-6 bg-black/80 backdrop-blur-md p-4 rounded-lg border border-[#d4af37]/40">
+               <div className="flex items-center justify-between text-[#d4af37] text-[10px] font-bold uppercase tracking-widest mb-1">
+                 <span>Rx #GLOW-8942</span>
+                 <span className="bg-[#d4af37] text-black px-1.5 py-0.5 rounded text-[8px] font-black">PRESCRIBED</span>
+               </div>
+               <p className="text-white text-xs font-mono font-bold line-clamp-1 mb-1">🧪 2% Salicylic Acid + 10% Niacinamide + 5% Caffeine</p>
+               <p className="text-gray-400 text-[10px]">Pairs with 4 Store Products • 1-Click Regimen</p>
+             </div>
           </div>
         </div>
       </section>
@@ -119,7 +154,7 @@ export default async function Home() {
       {/* Mid-page promotional banner layout matching Sephora */}
       <section className="max-w-[1920px] mx-auto px-4 md:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="relative aspect-[4/3] group overflow-hidden shadow-lg bg-gray-100">
+          <div className="relative aspect-[4/3] group overflow-hidden shadow-lg bg-gray-100 rounded-xl">
             <a href={`/product/${promo1.id || ''}`} className="block w-full h-full">
               <Image
                 src={promo1.image}
@@ -137,7 +172,7 @@ export default async function Home() {
             </a>
           </div>
           
-          <div className="relative aspect-[4/3] group overflow-hidden shadow-lg bg-gray-100">
+          <div className="relative aspect-[4/3] group overflow-hidden shadow-lg bg-gray-100 rounded-xl">
             <a href={`/product/${promo2.id || ''}`} className="block w-full h-full">
               <Image
                 src={promo2.image}
@@ -157,108 +192,12 @@ export default async function Home() {
         </div>
       </section>
 
-      <div className="py-8 bg-gray-50 border-y border-gray-100">
+      <div className="pt-4 pb-8">
         <ProductCarousel title="Just Dropped" products={displayNewArrivals} />
       </div>
 
-      {/* Featured Artisan Section */}
-      <section className="max-w-[1920px] mx-auto px-4 md:px-8 py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 border border-[#1a1a1a]">
-          <div className="relative aspect-square md:aspect-auto h-full min-h-[500px] overflow-hidden">
-             <Image 
-               src="https://images.unsplash.com/photo-1573461160327-b450ce3d8e7f?auto=format&fit=crop&q=80&w=800" 
-               alt="Artisan at work" 
-               fill 
-               sizes="(max-width: 1024px) 100vw, 50vw"
-               className="object-cover grayscale hover:grayscale-0 transition-all duration-1000"
-             />
-             <div className="absolute inset-0 bg-black/40" />
-             <div className="absolute bottom-12 left-12">
-                <p className="text-[#d4af37] text-xs font-bold uppercase tracking-[0.4em] mb-2">Artisan of the Month</p>
-                <h3 className="text-4xl font-serif font-bold text-white uppercase tracking-tighter">Radha K.</h3>
-             </div>
-          </div>
-          <div className="bg-[#050505] p-12 md:p-24 flex flex-col justify-center relative overflow-hidden">
-             <div className="absolute -top-24 -right-24 w-64 h-64 bg-[#d4af37]/5 blur-[100px] rounded-full" />
-             <div className="relative z-10">
-                <span className="text-6xl font-serif text-[#d4af37]/20 leading-none">“</span>
-                <p className="text-2xl md:text-3xl font-serif text-white/90 leading-relaxed italic mb-8 -mt-6">
-                  Every jar of Saffron Glow is hand-poured in small batches, honoring the traditions passed down through generations in my family.
-                </p>
-                <div className="h-[1px] w-12 bg-[#d4af37] mb-8" />
-                <p className="text-gray-500 text-sm uppercase tracking-widest leading-loose mb-12">
-                  Based in Jaipur, Radha specializes in cold-pressed botanical oils. Her products are exclusively available on Glowmart as part of our 'Heritage Beauty' collection.
-                </p>
-                <a 
-                  href="/store/heritage-botanicals"
-                  className="inline-flex items-center gap-4 text-[#d4af37] text-xs font-bold uppercase tracking-[0.3em] group"
-                >
-                  Explore Her Boutique <div className="w-8 h-[1px] bg-[#d4af37] group-hover:w-16 transition-all" />
-                </a>
-             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Become a Seller CTA */}
-      <section className="bg-black py-24 px-4 overflow-hidden relative">
-        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#d4af37] to-transparent opacity-50" />
-        <div className="max-w-7xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 text-[#d4af37] mb-8">
-            <span className="h-[1px] w-8 bg-[#d4af37]" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.4em]">Partner with Excellence</span>
-            <span className="h-[1px] w-8 bg-[#d4af37]" />
-          </div>
-          <h2 className="text-4xl md:text-6xl font-serif font-bold text-white mb-8 tracking-tight leading-tight">
-            Creators. Artisans. <br /> <span className="text-[#d4af37]">Global Entrepreneurs.</span>
-          </h2>
-          <p className="text-gray-500 text-lg mb-12 max-w-2xl mx-auto leading-relaxed">
-            Join the most sophisticated beauty network. List your products, reach elite customers, 
-            and scale your cosmetic boutique with our advanced AI tools.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <a 
-              href="/seller/register"
-              className="w-full sm:w-auto bg-[#d4af37] text-black px-12 py-5 font-bold uppercase tracking-widest text-xs hover:bg-white transition-all shadow-[0_0_30px_rgba(212,175,55,0.2)]"
-            >
-              Apply to Sell
-            </a>
-            <a 
-              href="/seller/pricing"
-              className="w-full sm:w-auto border border-white/20 text-white px-12 py-5 font-bold uppercase tracking-widest text-xs hover:bg-white hover:text-black transition-all"
-            >
-              View Tiers
-            </a>
-          </div>
-          
-          <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 opacity-40">
-             {[
-               { val: "10M+", label: "Luxury Seekers" },
-               { val: "2%", label: "Lowest Commission" },
-               { val: "24/7", label: "Concierge Support" },
-               { val: "AI", label: "Marketing Suite" }
-             ].map((stat, i) => (
-               <div key={i} className="text-center">
-                 <p className="text-2xl font-serif font-bold text-white">{stat.val}</p>
-                 <p className="text-[9px] uppercase tracking-widest text-[#d4af37] mt-1">{stat.label}</p>
-               </div>
-             ))}
-          </div>
-        </div>
-      </section>
-
       <Footer />
       <LiveSalesFeed />
-      
-      <style dangerouslySetInnerHTML={{__html: `
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none; /* IE and Edge */
-          scrollbar-width: none; /* Firefox */
-        }
-      `}} />
     </main>
   );
 }

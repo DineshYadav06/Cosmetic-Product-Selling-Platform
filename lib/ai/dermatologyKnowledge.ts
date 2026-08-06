@@ -389,18 +389,18 @@ export function generateAgenticDiagnosticPrompt(userMessage: string, inventory: 
   
   if (hasImage) {
     return {
-      reply: "🔬 **VISUAL SKIN SCAN ASSESSMENT**\nAnalyzing epidermal clarity, follicular pore congestion, and micro-redness distribution...\n\n### 📋 DIAGNOSTIC ACTION REQUIRED\nTo ensure 100% clinical prescription precision, please select your primary skin concern below:",
+      reply: "🌿 **Visual Face Scan Assessment**\nAnalyzing your skin clarity, pore congestion, and redness distribution...\n\nTo ensure complete precision, please select your primary skin concern below:",
       askForImage: false,
-      quickQuestions: ["Acne & Blackheads", "Dark Spots & Pigmentation", "Dryness & Barrier Breakdown", "Redness & Irritation"],
+      quickQuestions: ["Acne & Blackheads", "Dark Spots & Pigmentation", "Dryness & Barrier Care", "Redness & Sensitivity"],
       products: []
     };
   }
 
   if (lower.includes("hi") || lower.includes("hello") || lower.includes("hey") || lower.includes("help") || lower.length < 10) {
     return {
-      reply: "👨‍⚕️ **GLOWMART AI CLINICAL DERMATOLOGIST**\nWelcome to your personalized skin consultation! To prescribe the exact chemical composition formula for your skin, let's complete a quick diagnostic check:\n\n1. **What is your primary skin type & concern?** (e.g. *Acne, Red Rashes, Dark Circles, Hyperpigmentation, Rosacea*)\n2. **Are you currently using active retinoids or exfoliants?**\n\n📸 **CAMERA SCAN TIP**: Click the camera icon below to attach a clear face photo for 98%+ visual scan precision!",
+      reply: "🌿 **Welcome to GLOWMART Skin Care**\nHello! I am your AI Skincare Advisor. I'm here to understand your skin's unique needs and recommend effective active ingredient formulations.\n\nTell me what your skin is experiencing today, or choose an option below:",
       askForImage: true,
-      quickQuestions: ["Acne + Rash Treatment", "Under-Eye Dark Circles", "Oily & Acne-Prone", "Dry & Sensitive"],
+      quickQuestions: ["Acne & Redness Care", "Under-Eye Dark Circles", "Oily & Pore Care", "Dry & Sensitive Barrier"],
       products: []
     };
   }
@@ -410,7 +410,7 @@ export function generateAgenticDiagnosticPrompt(userMessage: string, inventory: 
 
 /**
  * Universal Generative Response Engine: Dynamically synthesizes ANY skin query or event
- * into a structured 5-part agentic clinical report with matching site catalog offers.
+ * into a structured agentic clinical report with matching site catalog offers.
  */
 export function generateUniversalGenerativeResponse(userMessage: string, inventory: any[], hasImage: boolean) {
   const agenticPrompt = generateAgenticDiagnosticPrompt(userMessage, inventory, hasImage);
@@ -438,53 +438,53 @@ export function generateUniversalGenerativeResponse(userMessage: string, invento
   if (hasFungal) {
     detectedConcerns.push("Malassezia Folliculitis (Fungal Acne)");
     activeMolecules.push("2% Salicylic Acid (BHA)", "10% Niacinamide", "Ketoconazole / Zinc Pyrithione");
-    mechanisms.push("BHA clears lipid-free follicular pores without feeding Malassezia yeast proliferation");
+    mechanisms.push("BHA clears lipid-free follicular pores without feeding yeast growth");
     askForImage = true;
   }
   if (hasAcne) {
-    detectedConcerns.push("Comedonal Acne Vulgaris");
+    detectedConcerns.push("Comedonal Acne & Pore Congestion");
     activeMolecules.push("2% Salicylic Acid (BHA)", "10% Niacinamide", "1% Zinc PCA");
-    mechanisms.push("BHA dissolves intra-follicular desmosomes; Zinc PCA & Niacinamide halt 5-alpha reductase sebum kinetics");
+    mechanisms.push("BHA decongests pores while Zinc PCA & Niacinamide regulate sebum kinetics");
     askForImage = true;
   }
   if (hasRash) {
-    detectedConcerns.push("Epidermal Erythema & Inflamed Rash");
+    detectedConcerns.push("Skin Redness & Sensitivity");
     activeMolecules.push("5% Centella Asiatica (Madecassoside)", "1% Panthenol (B5)", "Colloidal Oat");
-    mechanisms.push("Centella & Panthenol downregulate pro-inflammatory IL-1β/TNF-α cytokines & restore acid mantle lipids");
+    mechanisms.push("Centella & Panthenol soothe skin redness and reinforce your acid mantle");
     askForImage = true;
   }
   if (hasDarkCircles) {
-    detectedConcerns.push("Periorbital Microvascular Hyperpigmentation");
+    detectedConcerns.push("Periorbital Dark Circles & Eye Puffiness");
     activeMolecules.push("5% Caffeine", "EGCG", "Haloxyl Peptide");
-    mechanisms.push("5% Caffeine vasoconstricts infraorbital capillaries to clear stagnant hemoglobin blood deposits & depuff eyes");
+    mechanisms.push("Caffeine vasoconstricts infraorbital microcapillaries to depuff and brighten under-eyes");
     askForImage = true;
   }
   if (hasPigmentation && !hasDarkCircles) {
-    detectedConcerns.push("Post-Inflammatory Hyperpigmentation (PIH) & Melasma");
+    detectedConcerns.push("Dark Spots & Uneven Tone");
     activeMolecules.push("2% Alpha Arbutin", "1% Tranexamic Acid", "15% Vitamin C");
-    mechanisms.push("Alpha Arbutin & Tranexamic Acid inhibit tyrosinase enzyme activity to halt melanogenesis");
+    mechanisms.push("Alpha Arbutin & Tranexamic Acid help block melanosome transfer for clear radiance");
   }
   if (hasDryness && !hasRash) {
-    detectedConcerns.push("Stratum Corneum Barrier Dehydration & TEWL");
+    detectedConcerns.push("Dehydrated Skin Barrier");
     activeMolecules.push("3% Ceramide Complex (NP/AP/EOP)", "2% Multi-Weight Hyaluronic Acid");
-    mechanisms.push("Ceramides seal micro-cracks in intercellular lipid matrix to halt Transepidermal Water Loss (TEWL)");
+    mechanisms.push("Ceramides seal intercellular moisture to reduce moisture loss");
   }
   if (hasAging) {
-    detectedConcerns.push("Photoaging & Collagen Matrix Degradation");
+    detectedConcerns.push("Fine Lines & Elasticity Loss");
     activeMolecules.push("0.2% Granactive Retinoid", "Matrixyl 3000 Peptides");
-    mechanisms.push("Retinoid activates nuclear RAR/RXR receptors to stimulate type-I collagen & cellular renewal");
+    mechanisms.push("Retinoids encourage collagen renewal for firm, youthful elasticity");
   }
   if (hasSun) {
-    detectedConcerns.push("UV Photo-Damage Defense");
+    detectedConcerns.push("Sun Protection & Defense");
     activeMolecules.push("SPF 50 PA++++", "Tinosorb M Filters", "15% Vitamin C");
-    mechanisms.push("Broad-spectrum SPF 50 absorbs UVA/UVB photons, preventing ROS free-radical lipid oxidation");
+    mechanisms.push("Broad-spectrum SPF 50 shields skin cells against UVA/UVB photo-damage");
   }
 
   // Default fallback if no specific keywords hit
   if (detectedConcerns.length === 0) {
-    detectedConcerns.push("General Skin Barrier Maintenance & Clinical Optimization");
+    detectedConcerns.push("Daily Skin Barrier Care");
     activeMolecules.push("10% Niacinamide", "3% Ceramides", "SPF 50 PA++++");
-    mechanisms.push("Optimizes epidermal cell turnover, maintains lipid mantle integrity, and shields against UV ROS damage");
+    mechanisms.push("Protects lipid mantle integrity and promotes smooth skin cell turnover");
     askForImage = true;
   }
 
@@ -492,21 +492,20 @@ export function generateUniversalGenerativeResponse(userMessage: string, invento
   const formulaText = activeMolecules.join(" + ");
   const mechanismText = mechanisms.join("; ");
 
-  const replyText = `🔬 **CLINICAL DIAGNOSIS**
-${diagnosisText}
+  const replyText = `🔬 Clinical Evaluation\n${diagnosisText}
 
-🧪 **PRESCRIBED CHEMICAL FORMULA**
+🧪 Prescribed Active Formula
 ${formulaText}
 
-💡 **BIOCHEMICAL MECHANISM**
+💡 How This Works For You
 ${mechanismText}
 
-📋 **ROUTINE REGIMEN**
-- **AM**: Gentle pH 5.5 Cleanser → ${hasDarkCircles ? '5% Caffeine Eye Serum → ' : ''}Target Active Serum → ${hasRash ? 'Centella Rash Balm → ' : ''}SPF 50 PA++++ Sunscreen
-- **PM**: Double Cleanse → ${hasAcne || hasFungal ? '2% Salicylic Acid (3x/wk) → ' : ''}Target Treatment → Ceramide Barrier Repair Cream
+📋 Daily Routine Regimen
+- AM: Gentle pH 5.5 Cleanser → ${hasDarkCircles ? '5% Caffeine Eye Serum → ' : ''}Target Serum → ${hasRash ? 'Cica Soothing Balm → ' : ''}SPF 50 PA++++ Sunscreen
+- PM: Double Cleanse → ${hasAcne || hasFungal ? '2% Salicylic Acid (3x/wk) → ' : ''}Target Active → Ceramide Barrier Repair Cream
 
-⚠️ **SAFETY NOTE**
-${hasConflict || hasAcne || hasAging ? 'Do not layer Retinoids with AHA/BHA in the same PM session. Apply Vitamin C in AM under SPF 50.' : 'Always apply water-based serums before moisture creams. Patch test new active serums 24hrs prior to full face application.'}`;
+⚠️ Gentle Care Note
+${hasConflict || hasAcne || hasAging ? 'Avoid using Retinoids and Exfoliating Acids in the same evening. Use Vitamin C in the morning under sunscreen.' : 'Apply water-based serums on slightly damp skin, followed by your moisturizer.'}`;
 
   // Filter relevant products
   let matchedProds = catalog.filter(p => {

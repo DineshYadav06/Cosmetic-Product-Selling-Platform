@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, MapPin, Heart, ShoppingBag, User, Menu, X, ChevronRight, UserCircle } from "lucide-react";
+import { Search, MapPin, Heart, ShoppingBag, User, Menu, X, ChevronRight, UserCircle, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useStore } from "../lib/context/StoreContext";
 import { useEffect, useState } from "react";
@@ -158,6 +158,15 @@ export default function Header() {
                 <User size={21} />
               </Link>
             )}
+
+            {/* AI Skin Vision Scanner & Rx Button */}
+            <Link
+              href="/ai-consultant"
+              className="hidden sm:flex items-center gap-1.5 bg-[#d4af37]/10 border border-[#d4af37]/50 text-[#d4af37] hover:bg-[#d4af37] hover:text-black transition-all px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest shadow-[0_0_15px_rgba(212,175,55,0.2)]"
+            >
+              <Sparkles size={13} className="animate-pulse" />
+              <span>AI Skin Scan & Rx</span>
+            </Link>
 
             <Link href="/wishlist" className="hover:text-[#d4af37] transition-colors relative flex items-center">
               <Heart size={21} className="stroke-[1.5]" />
