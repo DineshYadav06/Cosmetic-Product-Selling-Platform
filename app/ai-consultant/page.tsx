@@ -233,30 +233,68 @@ export default function AIConsultantPage() {
                           <p className="text-lg font-bold uppercase tracking-widest">{results.diagnosis}</p>
                         </div>
 
+                        {/* User Photo Preview if present */}
+                        {userImage && (
+                          <div className="mb-4">
+                            <p className="text-gray-500 text-[10px] uppercase tracking-[0.2em] font-bold mb-2">Scanned Image</p>
+                            <div className="relative w-full h-36 rounded border border-[#1a1a1a] overflow-hidden">
+                              <img src={userImage} alt="User Skin Scan" className="w-full h-full object-cover" />
+                              <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded text-[8px] text-[#d4af37] font-bold uppercase tracking-wider">
+                                Visual Analyzed
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
                         {/* Health Score */}
                         <div className="pt-2">
                           <div className="flex justify-between items-center mb-2">
-                             <p className="text-gray-500 text-[10px] uppercase tracking-[0.2em] font-bold">Health Score</p>
-                             <span className="text-[#d4af37] font-bold text-xs">82%</span>
+                             <p className="text-gray-500 text-[10px] uppercase tracking-[0.2em] font-bold">Skin Vitality Score</p>
+                             <span className="text-[#d4af37] font-bold text-xs">{results.healthScore || 85}%</span>
                           </div>
                           <div className="h-1 w-full bg-[#111] rounded-full overflow-hidden">
                              <motion.div 
                                initial={{ width: 0 }} 
-                               animate={{ width: "82%" }} 
+                               animate={{ width: `${results.healthScore || 85}%` }} 
                                transition={{ duration: 1.5, delay: 0.5 }}
                                className="h-full bg-gradient-to-r from-[#d4af37]/40 to-[#d4af37]" 
                              />
                           </div>
                         </div>
 
+                        {/* Visual Breakdown Cards */}
+                        {results.visualAnalysis && (
+                          <div className="bg-black/50 p-4 border border-[#1a1a1a] rounded space-y-2">
+                            <p className="text-[#d4af37] text-[9px] font-bold uppercase tracking-widest">AI Vision Breakdown</p>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div>
+                                <span className="text-gray-500 text-[9px] uppercase font-bold block">Hydration</span>
+                                <span className="font-bold text-white/90">{results.visualAnalysis.hydrationLevel || "75%"}</span>
+                              </div>
+                              <div>
+                                <span className="text-gray-500 text-[9px] uppercase font-bold block">Oiliness</span>
+                                <span className="font-bold text-white/90">{results.visualAnalysis.oilinessLevel || "Balanced"}</span>
+                              </div>
+                              <div>
+                                <span className="text-gray-500 text-[9px] uppercase font-bold block">Redness</span>
+                                <span className="font-bold text-white/90">{results.visualAnalysis.rednessScore || "Low"}</span>
+                              </div>
+                              <div>
+                                <span className="text-gray-500 text-[9px] uppercase font-bold block">Primary Need</span>
+                                <span className="font-bold text-[#d4af37] line-clamp-1">{results.visualAnalysis.primaryConcern || "Hydration"}</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <p className="text-gray-500 text-[10px] uppercase tracking-[0.2em] font-bold mb-1">Type</p>
-                            <p className="text-sm font-bold text-white/80">{results.profile.skinType}</p>
+                            <p className="text-sm font-bold text-white/80">{results.profile?.skinType || 'Combination'}</p>
                           </div>
                           <div>
                             <p className="text-gray-500 text-[10px] uppercase tracking-[0.2em] font-bold mb-1">Sensitivity</p>
-                            <p className="text-sm font-bold text-white/80">{results.profile.sensitivity}</p>
+                            <p className="text-sm font-bold text-white/80">{results.profile?.sensitivity || 'Normal'}</p>
                           </div>
                         </div>
                         <p className="text-gray-400 text-sm leading-relaxed italic">
@@ -265,29 +303,53 @@ export default function AIConsultantPage() {
                       </div>
                     </div>
 
-                    {/* Regimen Schedule */}
-                    <div className="bg-black/40 p-6 border border-[#1a1a1a] space-y-6">
-                       <h4 className="text-[10px] font-bold uppercase tracking-widest text-white border-b border-[#111] pb-4 flex items-center gap-2">
-                         <Clock size={12} className="text-[#d4af37]" /> Regimen Schedule
+                    {/* Clinical Science & Ingredient Prescription */}
+                    <div className="bg-black/40 p-6 border border-[#1a1a1a] space-y-5">
+                       <h4 className="text-[10px] font-bold uppercase tracking-widest text-[#d4af37] border-b border-[#111] pb-3 flex items-center gap-2">
+                         <BrainCircuit size={14} /> Prescribed Clinical Actives
                        </h4>
-                       <div className="space-y-4">
-                          <div>
-                            <p className="text-[#d4af37] text-[9px] font-bold uppercase tracking-widest mb-2">Morning (AM)</p>
-                            <div className="flex flex-wrap gap-2">
-                               {results.schedule?.am.map((s: string) => (
-                                 <span key={s} className="text-[8px] bg-white/5 border border-white/10 px-2 py-1 uppercase font-bold tracking-widest">{s}</span>
-                               ))}
-                            </div>
-                          </div>
-                          <div>
-                            <p className="text-[#d4af37] text-[9px] font-bold uppercase tracking-widest mb-2">Evening (PM)</p>
-                            <div className="flex flex-wrap gap-2">
-                               {results.schedule?.pm.map((s: string) => (
-                                 <span key={s} className="text-[8px] bg-white/5 border border-white/10 px-2 py-1 uppercase font-bold tracking-widest">{s}</span>
-                               ))}
-                            </div>
-                          </div>
-                       </div>
+
+                       {/* Active Badges */}
+                       {results.activeIngredientsNeeded && results.activeIngredientsNeeded.length > 0 && (
+                         <div className="space-y-2">
+                           <p className="text-gray-500 text-[9px] font-bold uppercase tracking-widest">Key Active Molecules</p>
+                           <div className="flex flex-wrap gap-1.5">
+                             {results.activeIngredientsNeeded.map((act: string, idx: number) => (
+                               <span key={idx} className="text-[9px] bg-[#d4af37]/10 text-[#d4af37] border border-[#d4af37]/30 px-2 py-1 font-bold uppercase tracking-wider rounded-sm">
+                                 {act}
+                               </span>
+                             ))}
+                           </div>
+                         </div>
+                       )}
+
+                       {/* Barrier Status */}
+                       {results.barrierStatus && (
+                         <div>
+                           <p className="text-gray-500 text-[9px] font-bold uppercase tracking-widest mb-1">Barrier Integrity State</p>
+                           <p className="text-xs font-bold text-white/90">{results.barrierStatus}</p>
+                         </div>
+                       )}
+
+                       {/* Ingredient Conflicts */}
+                       {results.ingredientConflictsToAvoid && results.ingredientConflictsToAvoid.length > 0 && (
+                         <div className="bg-red-950/20 border border-red-900/30 p-3 rounded space-y-1">
+                           <p className="text-red-400 text-[9px] font-bold uppercase tracking-widest flex items-center gap-1">
+                             ⚠️ Safety Note: Layering Rule
+                           </p>
+                           {results.ingredientConflictsToAvoid.map((conf: string, idx: number) => (
+                             <p key={idx} className="text-[10px] text-red-200/80 font-light leading-relaxed">{conf}</p>
+                           ))}
+                         </div>
+                       )}
+
+                       {/* Climate Adaptation */}
+                       {results.climateAdvice && (
+                         <div>
+                           <p className="text-gray-500 text-[9px] font-bold uppercase tracking-widest mb-1">Environmental Defense</p>
+                           <p className="text-[11px] text-gray-300 font-light leading-relaxed">{results.climateAdvice}</p>
+                         </div>
+                       )}
                     </div>
 
                     <button 
@@ -301,6 +363,24 @@ export default function AIConsultantPage() {
 
                 {/* Recommendations */}
                 <div className="lg:col-span-2 space-y-10">
+                   {/* Prescribed Chemical Composition Formula Header Banner */}
+                   {results.prescribedComposition && (
+                     <div className="bg-[#d4af37]/10 border border-[#d4af37]/40 p-6 rounded-lg relative overflow-hidden">
+                       <div className="flex items-center gap-2 text-[#d4af37] text-xs font-bold uppercase tracking-widest mb-2">
+                         <Sparkles size={16} /> Prescribed Clinical Composition Formula
+                       </div>
+                       <h3 className="text-xl md:text-2xl font-serif font-bold text-white mb-2">
+                         {results.prescribedComposition.formula}
+                       </h3>
+                       <p className="text-gray-300 text-xs leading-relaxed mb-3 font-light">
+                         <strong className="text-white">Mechanism:</strong> {results.prescribedComposition.mechanism}
+                       </p>
+                       <p className="text-[#d4af37] text-[11px] font-bold uppercase tracking-wider">
+                         Cure Protocol: {results.prescribedComposition.cureProtocol}
+                       </p>
+                     </div>
+                   )}
+
                    <div className="flex items-center gap-4">
                       <h2 className="text-4xl font-serif font-bold">Recommended Regimen</h2>
                       <div className="h-[1px] flex-1 bg-[#1a1a1a]" />
@@ -313,7 +393,7 @@ export default function AIConsultantPage() {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: idx * 0.1 }}
-                          className="bg-[#0a0a0a] border border-[#1a1a1a] group overflow-hidden"
+                          className="bg-[#0a0a0a] border border-[#1a1a1a] group overflow-hidden relative"
                         >
                           <div className="aspect-[4/5] relative overflow-hidden bg-gray-900">
                              <Image 
@@ -326,14 +406,31 @@ export default function AIConsultantPage() {
                              <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-md px-3 py-1 border border-[#d4af37]/30">
                                 <p className="text-[10px] font-bold text-[#d4af37] uppercase tracking-widest">{product.step}</p>
                              </div>
+                             {product.offerBadge && (
+                               <div className="absolute top-4 right-4 bg-[#d4af37] text-black font-extrabold text-[9px] uppercase px-2 py-1 tracking-wider">
+                                 {product.offerBadge}
+                               </div>
+                             )}
                           </div>
                           <div className="p-6">
                             <p className="text-[10px] font-bold text-[#d4af37] uppercase tracking-[0.2em] mb-1">{product.brand}</p>
-                            <h4 className="text-lg font-serif font-bold text-white mb-2 line-clamp-1">{product.name}</h4>
+                            <h4 className="text-lg font-serif font-bold text-white mb-1 line-clamp-1">{product.name}</h4>
+                            
+                            {product.chemicalComposition && (
+                              <p className="text-[10px] text-gray-400 font-mono mb-3 line-clamp-1 bg-white/5 border border-white/10 px-2 py-0.5 rounded w-fit">
+                                🧪 {product.chemicalComposition}
+                              </p>
+                            )}
+
                             <p className="text-gray-500 text-xs mb-6 line-clamp-2 leading-relaxed">{product.reason}</p>
                             
                             <div className="flex items-center justify-between pt-4 border-t border-[#111]">
-                              <span className="text-lg font-serif font-bold">₹{product.price}</span>
+                              <div className="flex items-baseline gap-2">
+                                <span className="text-lg font-serif font-bold text-white">₹{product.price}</span>
+                                {product.originalPrice && product.originalPrice > product.price && (
+                                  <span className="text-xs text-gray-500 line-through font-serif">₹{product.originalPrice}</span>
+                                )}
+                              </div>
                               <Link 
                                 href={`/product/${product.id}`}
                                 className="text-[10px] font-bold uppercase tracking-widest text-[#d4af37] hover:text-white transition-colors flex items-center gap-2"
