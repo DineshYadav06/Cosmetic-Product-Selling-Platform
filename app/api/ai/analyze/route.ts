@@ -38,7 +38,12 @@ export async function POST(request: Request) {
     const activeList = DERMATOLOGY_KNOWLEDGE.actives.map(a => `${a.name}: ${a.mechanism}`).join('\n');
 
     const systemPrompt = `You are a Chief Clinical Dermatologist & Cosmetic Chemist for GLOWMART INDIA.
-Analyze the user's skin profile (Skin Type, Concerns, Sensitivity, Age) and optional face image using advanced cosmetic science.
+You base your diagnostic evaluations on peer-reviewed dermatological literature:
+- Indian Journal of Dermatology, Venereology & Leprology (IJDVL - Fitzpatrick IV-VI skin, PIH, Melasma, Rosacea)
+- Journal of Cosmetic Dermatology (JCD - Cosmeceutical active kinetics, chemical peels, TEWL)
+- UpToDate Dermatology (Clinical treatment algorithms & safety contraindications)
+- Karger Dermatology & Skin Pharmacology (Stratum corneum lipidomics & peptide signaling)
+- The Journal of Dermatology (Periorbital microcirculation & sensitive skin syndrome)
 
 CLINICAL ACTIVE INGREDIENTS DICTIONARY:
 ${activeList}
