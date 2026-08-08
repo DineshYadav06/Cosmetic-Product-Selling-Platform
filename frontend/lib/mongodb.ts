@@ -20,6 +20,12 @@ if (!cached) {
 async function connectToDatabase() {
   if (!MONGODB_URI) return null;
 
+  // Skip actual database connection during Next.js build phase to prevent ENOTFOUND errors
+  if (process.env.npm_lifecycle_event === 'build' || process.env.NEXT_PHASE === 'phase-production-build') {
+    console.log('Skipping MongoDB connection during build phase.');
+    return null;
+  }
+
   if (cached.conn) {
     return cached.conn;
   }
@@ -27,6 +33,7 @@ async function connectToDatabase() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      serverSelectionTimeoutMS: 5000, // Fail fast if the URI is unreachable
     };
 
     cached.promise = mongoose.connect(MONGODB_URI as string, opts).then((mongoose) => {

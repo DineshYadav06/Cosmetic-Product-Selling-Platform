@@ -18,7 +18,7 @@ export default function AccountPage() {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted) return null;      
 
   // If user is not logged in, display the entire Login/Signup section here!
   if (!user) {
