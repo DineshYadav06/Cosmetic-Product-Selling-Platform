@@ -4,7 +4,7 @@ A modern e-commerce platform for cosmetic products with comprehensive features f
 
 ## 📋 Features
 
-### Customer Features
+### Customer Features   
 - **User Authentication**: Secure registration, login, and password reset.
 - **Product Discovery**:
   - Browse products by category.
