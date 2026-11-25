@@ -15,5 +15,15 @@ from app.api.ai.router import router as ai_router
 api_router = APIRouter()
 
 api_router.include_router(auth_router)
-api_router.include_router(users_router)\napi_router.include_router(categories_router)\napi_router.include_router(brands_router)\napi_router.include_router(products_router)\napi_router.include_router(cart_router)\napi_router.include_router(orders_router)\napi_router.include_router(payments_router)\napi_router.include_router(reviews_router)\napi_router.include_router(coupons_router)\napi_router.include_router(dashboard_router)\napi_router.include_router(ai_router)
-# Other routers will be registered here later
+api_router.include_router(users_router)
+api_router.include_router(categories_router)
+api_router.include_router(brands_router)
+api_router.include_router(products_router)
+api_router.include_router(cart_router)
+api_router.include_router(orders_router)
+api_router.include_router(payments_router)
+api_router.include_router(reviews_router)
+api_router.include_router(coupons_router)
+api_router.include_router(dashboard_router)
+api_router.include_router(ai_router)
+

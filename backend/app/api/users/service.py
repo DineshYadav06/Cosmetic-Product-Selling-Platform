@@ -21,7 +21,10 @@ class UserService:
             hashed_password=hashed_password,
             role="USER"
         )
-        await db_user.insert()\n        from app.api.auth.service import auth_service\n        await auth_service.send_registration_otp(user_in.email)\n        return db_user
+        await db_user.insert()
+        from app.api.auth.service import auth_service
+        await auth_service.send_registration_otp(user_in.email)
+        return db_user
         
     async def get_user(self, user_id: str) -> User:
         user = await user_repository.get(user_id)
